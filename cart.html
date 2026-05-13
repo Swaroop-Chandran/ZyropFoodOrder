@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Your cart | ZyropFoodOrder</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="css/zyrop.css" rel="stylesheet"/>
+<script src="js/tailwind-theme.js"></script>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col">
+<header class="bg-surface shadow-sm sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-desktop h-20 max-w-container-max-width mx-auto">
+<a href="index.html" class="text-headline-md font-extrabold text-primary">ZyropFoodOrder</a>
+<nav class="hidden lg:flex items-center gap-6 flex-wrap">
+<a class="text-secondary hover:text-primary font-label-md whitespace-nowrap" href="index.html">Browse</a>
+<a class="text-secondary hover:text-primary font-label-md whitespace-nowrap" href="order-track.html">Track</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-md whitespace-nowrap" href="cart.html">Cart</a>
+<a class="text-secondary hover:text-primary font-label-md whitespace-nowrap" href="partner-dashboard.html">Partner</a>
+<a class="text-secondary hover:text-primary font-label-md whitespace-nowrap" href="admin-panel.html">Admin</a>
+</nav>
+<a class="bg-primary text-on-primary px-5 py-2 rounded-full font-label-md" href="checkout.html">Checkout</a>
+</div>
+</header>
+<div class="bg-surface-container border-b border-outline-variant/40">
+<div class="max-w-container-max-width mx-auto px-margin-desktop py-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-label-sm">
+<span class="text-on-surface-variant font-semibold uppercase tracking-wide">Platform</span>
+<a class="text-secondary hover:text-primary" href="delivery-queue.html">Delivery queue</a>
+<span class="text-outline-variant hidden sm:inline">|</span>
+<a class="text-secondary hover:text-primary" href="board.html">Board</a>
+<span class="text-outline-variant hidden sm:inline">|</span>
+<a class="text-secondary hover:text-primary" href="restaurant-menu.html">Restaurant menu</a>
+<span class="text-outline-variant hidden sm:inline">|</span>
+<a class="text-secondary hover:text-primary" href="menu-manager.html">Menu manager</a>
+<span class="text-outline-variant hidden sm:inline">|</span>
+<a class="text-secondary hover:text-primary" href="checkout.html">Checkout</a>
+</div>
+</div>
+<main class="flex-1 max-w-container-max-width mx-auto w-full px-margin-desktop py-10">
+<h1 class="text-headline-lg font-headline-lg mb-2">Your cart</h1>
+<p class="text-body-md text-on-surface-variant mb-8">Items from <strong class="text-on-surface">The Steakhouse Grill</strong></p>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter items-start">
+<div class="lg:col-span-2 space-y-4">
+<div class="bg-surface-container-low rounded-xl p-4 md:p-6 flex gap-4 border border-outline-variant/30">
+<img class="w-24 h-24 rounded-lg object-cover shrink-0" alt="" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAD0XAp8nptdYGRpXaXlDxP0LF6wgMjgl_XUd1PUTqNVFD5wCpaRAcP9RrtJ_RzxEFCdvyZG1t6h2l3zumlkNEQL70h0ffZe89GQnqwU40u0rXJplohhbgN4tQf7HYJEiAUCGpF_uozV0_2frD6zgKOuFHbSut4pKI7StvE428nCqKdqLhoGFGVSxTi5KFVIW1fPpkf7zcimRHsy8bYejS30SJgcPPvUC2NUwqC9RtGAw_PjWabuKcjIMslXFf0-6H8YrAuP_o-izc"/>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between gap-2">
+<h2 class="text-label-md font-label-md">Ribeye 12oz</h2>
+<p class="text-label-md font-bold text-primary shrink-0">$34.00</p>
+</div>
+<p class="text-label-sm text-secondary mt-1">Medium rare · peppercorn sauce</p>
+<div class="flex items-center gap-3 mt-4">
+<div class="inline-flex items-center rounded-full border border-outline-variant">
+<button type="button" class="px-3 py-1.5 text-on-surface-variant hover:bg-surface-container-high rounded-l-full" aria-label="Decrease">−</button>
+<span class="px-3 text-label-md font-semibold">1</span>
+<button type="button" class="px-3 py-1.5 text-on-surface-variant hover:bg-surface-container-high rounded-r-full" aria-label="Increase">+</button>
+</div>
+<button type="button" class="text-label-sm text-error hover:underline ml-auto">Remove</button>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-4 md:p-6 flex gap-4 border border-outline-variant/30">
+<img class="w-24 h-24 rounded-lg object-cover shrink-0" alt="" src="https://lh3.googleusercontent.com/aida-public/AB6AXuACPe1OwcnqiSYz6mGkYPwpTwUZkoQT8Jeq336MHTLd5-szfhdGafbxKuJ3QVMBjxqcxm4UwTDipbBKsEECFSl_VHIJI58oJjjfYhQRcILi8-eedqeW9Mmlq_MJCKbX6yX6excKavJXTN1YruIGDT445j8SmCA9w4wNuJUqWrKgCGPpn5cc-E6Ph19OOcwM0Lu_vntB6rnd88Rr2jXfoBPCYqOX-gehGl-S_UIFfvPKeRPs0iP4Kc_0ZbV9KJ8H6mFYWZPD6gO7v2U"/>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between gap-2">
+<h2 class="text-label-md font-label-md">Truffle fries</h2>
+<p class="text-label-md font-bold text-primary shrink-0">$9.50</p>
+</div>
+<p class="text-label-sm text-secondary mt-1">Share size</p>
+<div class="flex items-center gap-3 mt-4">
+<div class="inline-flex items-center rounded-full border border-outline-variant">
+<button type="button" class="px-3 py-1.5 rounded-l-full hover:bg-surface-container-high">−</button>
+<span class="px-3 text-label-md font-semibold">1</span>
+<button type="button" class="px-3 py-1.5 rounded-r-full hover:bg-surface-container-high">+</button>
+</div>
+<button type="button" class="text-label-sm text-error hover:underline ml-auto">Remove</button>
+</div>
+</div>
+</div>
+<a href="restaurant-menu.html" class="inline-flex items-center gap-2 text-primary font-label-md hover:underline">
+<span class="material-symbols-outlined text-[20px]">add</span> Add more items
+</a>
+</div>
+<aside class="bg-surface-container-low rounded-xl p-6 border border-outline-variant/30 lg:sticky lg:top-28">
+<h3 class="text-headline-md font-headline-md mb-4">Summary</h3>
+<div class="space-y-3 text-body-md">
+<div class="flex justify-between text-secondary"><span>Subtotal</span><span class="text-on-surface">$43.50</span></div>
+<div class="flex justify-between text-secondary"><span>Delivery</span><span class="text-tertiary font-semibold">$0.00</span></div>
+<div class="flex justify-between text-secondary"><span>Service fee</span><span class="text-on-surface">$2.15</span></div>
+<div class="flex justify-between text-secondary"><span>Tax</span><span class="text-on-surface">$3.62</span></div>
+<div class="border-t border-outline-variant pt-4 mt-4 flex justify-between text-label-md font-bold">
+<span>Total</span>
+<span class="text-primary">$49.27</span>
+</div>
+</div>
+<a href="checkout.html" class="mt-6 block w-full text-center bg-primary text-on-primary py-3.5 rounded-full font-label-md hover:opacity-95 transition-opacity">Proceed to checkout</a>
+<p class="text-label-sm text-on-surface-variant text-center mt-4">Promo codes can be applied at checkout.</p>
+</aside>
+</div>
+</main>
+<footer class="bg-surface-container-highest border-t mt-auto">
+<div class="py-6 px-margin-desktop max-w-container-max-width mx-auto text-label-sm text-on-surface-variant flex justify-between flex-wrap gap-4">
+<a href="index.html" class="hover:text-primary">Continue shopping</a>
+<p>© 2026 ZyropFoodOrder</p>
+</div>
+</footer>
+</body>
+</html>

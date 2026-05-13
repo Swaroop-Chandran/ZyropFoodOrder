@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin panel | ZyropFoodOrder</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="css/zyrop.css" rel="stylesheet"/>
+<script src="js/tailwind-theme.js"></script>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col">
+<header class="bg-surface shadow-sm sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-desktop h-20 max-w-container-max-width mx-auto">
+<a href="index.html" class="text-headline-md font-extrabold text-primary">ZyropFoodOrder</a>
+<nav class="hidden lg:flex items-center gap-6">
+<a class="text-secondary hover:text-primary font-label-md" href="index.html">Browse</a>
+<a class="text-secondary hover:text-primary font-label-md" href="order-track.html">Track</a>
+<a class="text-secondary hover:text-primary font-label-md" href="cart.html">Cart</a>
+<a class="text-secondary hover:text-primary font-label-md" href="partner-dashboard.html">Partner</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-md" href="admin-panel.html">Admin</a>
+</nav>
+<span class="text-label-sm text-secondary hidden sm:block">Superadmin</span>
+</div>
+</header>
+<div class="bg-surface-container border-b border-outline-variant/40">
+<div class="max-w-container-max-width mx-auto px-margin-desktop py-2 flex flex-wrap gap-x-4 gap-y-2 text-label-sm">
+<span class="text-on-surface-variant font-semibold uppercase">Platform</span>
+<a class="text-secondary hover:text-primary" href="delivery-queue.html">Delivery queue</a>
+<span class="text-outline-variant hidden sm:inline">|</span>
+<a class="text-secondary hover:text-primary" href="board.html">Board</a>
+<span class="text-outline-variant hidden sm:inline">|</span>
+<a class="text-secondary hover:text-primary" href="restaurant-menu.html">Restaurant menu</a>
+<span class="text-outline-variant hidden sm:inline">|</span>
+<a class="text-secondary hover:text-primary" href="menu-manager.html">Menu manager</a>
+<span class="text-outline-variant hidden sm:inline">|</span>
+<a class="text-secondary hover:text-primary" href="checkout.html">Checkout</a>
+</div>
+</div>
+<main class="flex-1 flex max-w-container-max-width mx-auto w-full px-margin-desktop py-10 gap-10">
+<aside class="hidden lg:flex w-56 shrink-0 flex-col gap-1 border-r border-outline-variant/40 pr-6">
+<p class="text-label-sm font-bold text-on-surface-variant uppercase tracking-wide mb-2">Console</p>
+<a class="px-3 py-2 rounded-lg bg-primary/10 text-primary font-label-md" href="admin-panel.html">Overview</a>
+<a class="px-3 py-2 rounded-lg text-secondary hover:bg-surface-container-high font-label-md" href="delivery-queue.html">Operations</a>
+<a class="px-3 py-2 rounded-lg text-secondary hover:bg-surface-container-high font-label-md" href="#">Users</a>
+<a class="px-3 py-2 rounded-lg text-secondary hover:bg-surface-container-high font-label-md" href="#">Restaurants</a>
+<a class="px-3 py-2 rounded-lg text-secondary hover:bg-surface-container-high font-label-md" href="#">Finance</a>
+</aside>
+<div class="flex-1 min-w-0">
+<h1 class="text-headline-lg font-headline-lg mb-2">Admin overview</h1>
+<p class="text-body-md text-on-surface-variant mb-8">Network health, compliance, and growth in one place.</p>
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter mb-10">
+<div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/30">
+<p class="text-label-sm text-secondary">GMV (24h)</p>
+<p class="text-headline-md font-bold mt-1">$284,900</p>
+<p class="text-label-sm text-tertiary mt-1">+8.2% vs yesterday</p>
+</div>
+<div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/30">
+<p class="text-label-sm text-secondary">Orders</p>
+<p class="text-headline-md font-bold mt-1">12,480</p>
+<p class="text-label-sm text-on-surface-variant mt-1">Peak 7–9 PM</p>
+</div>
+<div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/30">
+<p class="text-label-sm text-secondary">Active restaurants</p>
+<p class="text-headline-md font-bold mt-1">1,042</p>
+<p class="text-label-sm text-error mt-1">3 suspended</p>
+</div>
+<div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/30">
+<p class="text-label-sm text-secondary">On-time rate</p>
+<p class="text-headline-md font-bold mt-1">94.1%</p>
+<p class="text-label-sm text-tertiary mt-1">Target 93%</p>
+</div>
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-gutter">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/40 overflow-hidden">
+<div class="px-5 py-4 border-b border-outline-variant/40 flex justify-between items-center">
+<h2 class="text-headline-md font-headline-md">Flagged reviews</h2>
+<button type="button" class="text-label-sm text-primary font-semibold">View all</button>
+</div>
+<ul class="divide-y divide-outline-variant/30 text-body-md">
+<li class="px-5 py-4 flex justify-between gap-4"><span class="text-secondary">Urban Bites</span><span class="text-label-sm text-error shrink-0">Profanity</span></li>
+<li class="px-5 py-4 flex justify-between gap-4"><span class="text-secondary">Miyabi Sushi</span><span class="text-label-sm text-on-surface-variant shrink-0">Spam</span></li>
+<li class="px-5 py-4 flex justify-between gap-4"><span class="text-secondary">Taco Fiesta</span><span class="text-label-sm text-on-surface-variant shrink-0">Dispute</span></li>
+</ul>
+</div>
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/40 overflow-hidden">
+<div class="px-5 py-4 border-b border-outline-variant/40">
+<h2 class="text-headline-md font-headline-md">Support queue</h2>
+</div>
+<table class="w-full text-left text-label-sm">
+<thead class="bg-surface-container text-on-surface-variant uppercase text-[11px]">
+<tr><th class="px-4 py-2">Ticket</th><th class="px-4 py-2">Topic</th><th class="px-4 py-2">SLA</th></tr>
+</thead>
+<tbody class="text-body-md divide-y divide-outline-variant/30">
+<tr><td class="px-4 py-3 font-semibold">#8821</td><td class="px-4 py-3 text-secondary">Refund</td><td class="px-4 py-3 text-error font-label-md">18m</td></tr>
+<tr><td class="px-4 py-3 font-semibold">#8817</td><td class="px-4 py-3 text-secondary">Driver safety</td><td class="px-4 py-3">42m</td></tr>
+<tr><td class="px-4 py-3 font-semibold">#8812</td><td class="px-4 py-3 text-secondary">Partner payout</td><td class="px-4 py-3">2h</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+<footer class="bg-surface-container-highest border-t mt-auto">
+<div class="py-6 px-margin-desktop max-w-container-max-width mx-auto text-label-sm text-on-surface-variant flex justify-between">
+<a href="index.html" class="hover:text-primary">Exit to storefront</a>
+<p>© 2026 ZyropFoodOrder</p>
+</div>
+</footer>
+</body>
+</html>

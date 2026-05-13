@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Delivery queue | ZyropFoodOrder</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="css/zyrop.css" rel="stylesheet"/>
+<script src="js/tailwind-theme.js"></script>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col">
+<header class="bg-surface shadow-sm sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-desktop h-20 max-w-container-max-width mx-auto">
+<a href="index.html" class="text-headline-md font-extrabold text-primary">ZyropFoodOrder</a>
+<nav class="hidden lg:flex items-center gap-6 flex-wrap">
+<a class="text-secondary hover:text-primary font-label-md whitespace-nowrap" href="index.html">Browse</a>
+<a class="text-secondary hover:text-primary font-label-md whitespace-nowrap" href="order-track.html">Track</a>
+<a class="text-secondary hover:text-primary font-label-md whitespace-nowrap" href="cart.html">Cart</a>
+<a class="text-secondary hover:text-primary font-label-md whitespace-nowrap" href="partner-dashboard.html">Partner</a>
+<a class="text-secondary hover:text-primary font-label-md whitespace-nowrap" href="admin-panel.html">Admin</a>
+</nav>
+<a class="bg-primary text-on-primary px-5 py-2 rounded-full font-label-md" href="cart.html">Cart</a>
+</div>
+</header>
+<div class="bg-surface-container border-b border-outline-variant/40">
+<div class="max-w-container-max-width mx-auto px-margin-desktop py-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-label-sm font-label-sm">
+<span class="text-on-surface-variant font-semibold uppercase tracking-wide">Platform</span>
+<a class="text-primary font-bold" href="delivery-queue.html">Delivery queue</a>
+<span class="text-outline-variant hidden sm:inline">|</span>
+<a class="text-secondary hover:text-primary" href="board.html">Board</a>
+<span class="text-outline-variant hidden sm:inline">|</span>
+<a class="text-secondary hover:text-primary" href="restaurant-menu.html">Restaurant menu</a>
+<span class="text-outline-variant hidden sm:inline">|</span>
+<a class="text-secondary hover:text-primary" href="menu-manager.html">Menu manager</a>
+<span class="text-outline-variant hidden sm:inline">|</span>
+<a class="text-secondary hover:text-primary" href="checkout.html">Checkout</a>
+</div>
+</div>
+<main class="flex-1 max-w-container-max-width mx-auto w-full px-margin-desktop py-10">
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+<div>
+<h1 class="text-headline-lg font-headline-lg">Delivery queue</h1>
+<p class="text-body-md text-on-surface-variant mt-1">Dispatch board · prioritize SLA and zone load</p>
+</div>
+<div class="flex flex-wrap gap-2">
+<button type="button" class="px-4 py-2 rounded-full border border-outline-variant text-label-sm font-label-sm hover:bg-surface-container-high">Auto-assign</button>
+<button type="button" class="px-4 py-2 rounded-full bg-primary text-on-primary text-label-sm font-label-sm">Refresh</button>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter mb-10">
+<div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/30">
+<p class="text-label-sm text-secondary">Active deliveries</p>
+<p class="text-headline-md font-bold text-on-surface mt-1">38</p>
+</div>
+<div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/30">
+<p class="text-label-sm text-secondary">At risk (&gt;5 min)</p>
+<p class="text-headline-md font-bold text-error mt-1">4</p>
+</div>
+<div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/30">
+<p class="text-label-sm text-secondary">Unassigned</p>
+<p class="text-headline-md font-bold text-primary mt-1">7</p>
+</div>
+<div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/30">
+<p class="text-label-sm text-secondary">Avg handoff</p>
+<p class="text-headline-md font-bold text-tertiary mt-1">6.2 min</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/40 overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left text-label-sm">
+<thead class="bg-surface-container text-on-surface-variant uppercase tracking-wide text-[11px]">
+<tr>
+<th class="px-4 py-3 font-semibold">Order</th>
+<th class="px-4 py-3 font-semibold">Restaurant</th>
+<th class="px-4 py-3 font-semibold">Zone</th>
+<th class="px-4 py-3 font-semibold">SLA</th>
+<th class="px-4 py-3 font-semibold">Driver</th>
+<th class="px-4 py-3 font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="text-body-md divide-y divide-outline-variant/40">
+<tr class="hover:bg-surface-container/50">
+<td class="px-4 py-3 font-semibold">#ZY-20418</td>
+<td class="px-4 py-3 text-secondary">The Steakhouse Grill</td>
+<td class="px-4 py-3">North · A3</td>
+<td class="px-4 py-3"><span class="text-error font-label-md">2m left</span></td>
+<td class="px-4 py-3">Alex M.</td>
+<td class="px-4 py-3 text-right"><a class="text-primary font-label-md" href="order-track.html">Track</a></td>
+</tr>
+<tr class="hover:bg-surface-container/50">
+<td class="px-4 py-3 font-semibold">#ZY-20397</td>
+<td class="px-4 py-3 text-secondary">Urban Bites</td>
+<td class="px-4 py-3">Central · C1</td>
+<td class="px-4 py-3 text-tertiary font-label-md">11m</td>
+<td class="px-4 py-3 text-on-surface-variant">Unassigned</td>
+<td class="px-4 py-3 text-right"><button type="button" class="text-primary font-label-md">Assign</button></td>
+</tr>
+<tr class="hover:bg-surface-container/50">
+<td class="px-4 py-3 font-semibold">#ZY-20388</td>
+<td class="px-4 py-3 text-secondary">Pasta Fresca</td>
+<td class="px-4 py-3">South · S2</td>
+<td class="px-4 py-3">18m</td>
+<td class="px-4 py-3">Jamie L.</td>
+<td class="px-4 py-3 text-right"><a class="text-primary font-label-md" href="board.html">Board</a></td>
+</tr>
+<tr class="hover:bg-surface-container/50">
+<td class="px-4 py-3 font-semibold">#ZY-20371</td>
+<td class="px-4 py-3 text-secondary">Green Leaf Kitchen</td>
+<td class="px-4 py-3">East · E4</td>
+<td class="px-4 py-3">24m</td>
+<td class="px-4 py-3">Ravi P.</td>
+<td class="px-4 py-3 text-right"><button type="button" class="text-primary font-label-md">Nudge</button></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+<footer class="bg-surface-container-highest border-t border-outline-variant mt-auto">
+<div class="py-6 px-margin-desktop max-w-container-max-width mx-auto flex flex-wrap justify-between gap-4 text-label-sm text-on-surface-variant">
+<a href="index.html" class="hover:text-primary">Home</a>
+<p>© 2026 ZyropFoodOrder</p>
+</div>
+</footer>
+</body>
+</html>
