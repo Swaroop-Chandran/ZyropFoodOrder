@@ -1,3 +1,11 @@
+<?php
+session_start();
+// Redirect to login if user is not authenticated
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,15 +30,21 @@
 <header class="bg-surface border-b border-outline-variant/30 sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 h-16 flex items-center justify-between">
     <div class="flex items-center gap-4">
-      <a href="index.html" class="flex items-center gap-1 text-secondary hover:text-primary transition-colors font-semibold text-sm">
+      <a href="index.php" class="flex items-center gap-1 text-secondary hover:text-primary transition-colors font-semibold text-sm">
         <span class="material-symbols-outlined" style="font-size:20px">arrow_back</span>
         Back to Menu
       </a>
       <div class="h-5 w-px bg-outline-variant hidden sm:block"></div>
-      <a href="index.html" class="font-extrabold text-xl text-primary hidden sm:block">ZyropFoodOrder</a>
+      <a href="index.php" class="font-extrabold text-xl text-primary hidden sm:block">ZyropFoodOrder</a>
     </div>
     <h1 class="font-extrabold text-lg text-on-surface">Your Cart</h1>
-    <a href="login.html" class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" title="Account">account_circle</a>
+    
+    <!-- Account Info Header Menu -->
+    <div class="flex items-center gap-2 border border-outline-variant/30 rounded-full px-3 py-1 bg-surface-container-low">
+      <span class="material-symbols-outlined text-primary" style="font-size:18px">account_circle</span>
+      <span class="text-xs font-bold text-on-surface truncate max-w-[100px]"><?php echo htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]); ?></span>
+      <a href="logout.php" class="material-symbols-outlined text-secondary hover:text-error transition-colors" style="font-size:16px" title="Logout">logout</a>
+    </div>
   </div>
 </header>
 
@@ -60,7 +74,7 @@
     <div class="text-8xl">🛒</div>
     <h2 class="text-2xl font-extrabold text-on-surface">Your cart is empty</h2>
     <p class="text-secondary max-w-xs">Looks like you haven't added anything yet. Explore our menu and discover something delicious!</p>
-    <a href="index.html" class="btn-primary">
+    <a href="index.php" class="btn-primary">
       <span class="material-symbols-outlined" style="font-size:20px">restaurant_menu</span>
       Browse Menu
     </a>
@@ -197,7 +211,7 @@
             <span class="material-symbols-outlined" style="font-size:20px">payments</span>
             Proceed to Payment
           </button>
-          <a href="index.html" class="btn-outline w-full text-center text-sm">
+          <a href="index.php" class="btn-outline w-full text-center text-sm">
             <span class="material-symbols-outlined" style="font-size:18px">add_circle</span>
             Add more items
           </a>
@@ -293,15 +307,27 @@ function cartQty(id, delta) {
   renderCart();
 }
 
+// Ensure local item badge increments correctly
+function updateCartBadge() {
+  const badges = document.querySelectorAll('.cart-count-badge');
+  const count = ZyropCart.getTotalCount();
+  badges.forEach(badge => {
+    badge.textContent = count;
+    badge.style.display = count > 0 ? 'flex' : 'none';
+  });
+}
+
 function removeItem(id) {
   ZyropCart.removeItem(id);
   renderCart();
+  updateCartBadge();
   showToast('Item removed from cart', 'info');
 }
 
 function clearCart() {
   ZyropCart.clearCart();
   renderCart();
+  updateCartBadge();
   showToast('Cart cleared', 'info');
 }
 
@@ -412,7 +438,7 @@ function proceedToCheckout() {
   const btn = document.getElementById('checkout-btn');
   btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:20px;animation:spin 0.8s linear infinite">progress_activity</span> Redirecting…';
   btn.disabled = true;
-  setTimeout(() => { window.location.href = 'checkout.html'; }, 600);
+  setTimeout(() => { window.location.href = 'checkout.php'; }, 600);
 }
 </script>
 </body>

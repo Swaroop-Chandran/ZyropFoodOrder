@@ -1,3 +1,43 @@
+<?php
+session_start();
+// Gated behind active session check
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+$orderId = $_GET['id'] ?? '';
+if (!$orderId) {
+    header("Location: index.php");
+    exit();
+}
+
+require_once 'db.php';
+
+try {
+    // Fetch order details
+    $stmt = $pdo->prepare("SELECT * FROM orders WHERE order_id = ? AND user_id = ?");
+    $stmt->execute([$orderId, $_SESSION['user_id']]);
+    $order = $stmt->fetch();
+
+    if (!$order) {
+        header("Location: index.php");
+        exit();
+    }
+
+    // Fetch items in the order
+    $itemStmt = $pdo->prepare("SELECT * FROM order_items WHERE order_id = ?");
+    $itemStmt->execute([$order['id']]);
+    $orderItems = $itemStmt->fetchAll();
+
+} catch (\Exception $e) {
+    die("Error loading order: " . $e->getMessage());
+}
+
+$pmIcons   = ['card' => 'credit_card', 'upi' => 'bolt', 'cod' => 'payments'];
+$pmLabels  = ['card' => 'Paid via Card', 'upi' => 'Paid via UPI', 'cod' => 'Cash on Delivery'];
+$paymentMode = $order['payment_mode'] ?? 'cod';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -81,11 +121,18 @@
 <!-- ===== HEADER ===== -->
 <header class="bg-surface border-b border-outline-variant/30">
   <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-10 h-16 flex items-center justify-between">
-    <a href="index.html" class="font-extrabold text-xl text-primary">ZyropFoodOrder</a>
-    <a href="index.html" class="flex items-center gap-1 text-secondary hover:text-primary transition-colors text-sm font-semibold">
-      <span class="material-symbols-outlined" style="font-size:18px">home</span>
-      Home
-    </a>
+    <a href="index.php" class="font-extrabold text-xl text-primary">ZyropFoodOrder</a>
+    <div class="flex items-center gap-4">
+      <a href="index.php" class="flex items-center gap-1 text-secondary hover:text-primary transition-colors text-sm font-semibold">
+        <span class="material-symbols-outlined" style="font-size:18px">home</span>
+        Home
+      </a>
+      <div class="h-5 w-px bg-outline-variant"></div>
+      <a href="logout.php" class="flex items-center gap-1 text-secondary hover:text-error transition-colors text-sm font-semibold" title="Logout">
+        <span class="material-symbols-outlined" style="font-size:18px">logout</span>
+        Logout
+      </a>
+    </div>
   </div>
 </header>
 
@@ -131,7 +178,7 @@
         <div class="inline-flex items-center gap-2 bg-surface-container-low border border-outline-variant/30 rounded-xl px-5 py-3 mb-6">
           <span class="material-symbols-outlined text-secondary" style="font-size:18px">receipt_long</span>
           <span class="text-sm text-secondary">Order ID:</span>
-          <span class="font-extrabold text-on-surface" id="order-id">ZYR0000000</span>
+          <span class="font-extrabold text-on-surface" id="order-id"><?= htmlspecialchars($order['order_id']) ?></span>
           <button onclick="copyOrderId()" class="material-symbols-outlined text-secondary hover:text-primary transition-colors" style="font-size:16px">content_copy</button>
         </div>
 
@@ -145,7 +192,7 @@
           </div>
           <div class="text-left">
             <p class="font-bold text-sm text-on-surface">Estimated Delivery</p>
-            <p class="text-secondary text-xs" id="eta-time">by 01:15 AM</p>
+            <p class="text-secondary text-xs" id="eta-time">by 00:00 AM</p>
             <div class="flex items-center gap-1 mt-1">
               <span class="w-2 h-2 bg-tertiary rounded-full delivery-dot"></span>
               <span class="text-xs text-tertiary font-semibold">Live tracking active</span>
@@ -172,11 +219,11 @@
           <span class="material-symbols-outlined text-primary mt-0.5" style="font-size:22px">location_on</span>
           <div class="flex-1">
             <p class="font-bold text-sm text-on-surface">Delivering to</p>
-            <p class="text-xs text-secondary mt-0.5" id="confirm-addr">Loading address…</p>
+            <p class="text-xs text-secondary mt-0.5" id="confirm-addr"><?= htmlspecialchars($order['address']) ?></p>
           </div>
           <div class="flex items-center gap-1 text-xs font-bold text-secondary bg-surface-container rounded-full px-3 py-1">
             <span class="material-symbols-outlined" style="font-size:14px">schedule</span>
-            <span id="confirm-time">—</span>
+            <span id="confirm-time">~35 min</span>
           </div>
         </div>
       </div>
@@ -190,7 +237,18 @@
       <div class="bg-white rounded-2xl border border-outline-variant/30 p-6">
         <h2 class="font-extrabold text-base text-on-surface mb-4">Your Order</h2>
         <div id="confirm-items" class="flex flex-col gap-4">
-          <!-- Populated by JS -->
+          <?php foreach ($orderItems as $item): ?>
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0 font-bold text-lg">
+                🍽️
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-on-surface truncate"><?= htmlspecialchars($item['name']) ?></p>
+                <p class="text-xs text-secondary"><?= $item['quantity'] ?> × ₹<?= number_format($item['price'], 2) ?></p>
+              </div>
+              <span class="text-sm font-bold">₹<?= number_format($item['quantity'] * $item['price'], 2) ?></span>
+            </div>
+          <?php endforeach; ?>
         </div>
       </div>
 
@@ -198,25 +256,31 @@
       <div class="bg-white rounded-2xl border border-outline-variant/30 p-6">
         <h2 class="font-extrabold text-base text-on-surface mb-4">Bill Summary</h2>
         <div class="flex flex-col gap-2 text-sm" id="confirm-summary">
-          <!-- Populated by JS -->
+          <div class="flex justify-between"><span class="text-secondary">Subtotal</span><span class="font-semibold">₹<?= number_format($order['subtotal'], 2) ?></span></div>
+          <div class="flex justify-between"><span class="text-secondary">Delivery</span><span class="font-semibold">₹<?= number_format($order['delivery_fee'], 2) ?></span></div>
+          <div class="flex justify-between"><span class="text-secondary">Platform fee</span><span class="font-semibold">₹<?= number_format($order['platform_fee'], 2) ?></span></div>
+          <div class="flex justify-between"><span class="text-secondary">GST</span><span class="font-semibold">₹<?= number_format($order['gst'], 2) ?></span></div>
+          <?php if ($order['discount'] > 0): ?>
+            <div class="flex justify-between text-tertiary"><span>Discount</span><span class="font-semibold">-₹<?= number_format($order['discount'], 2) ?></span></div>
+          <?php endif; ?>
         </div>
         <div class="border-t border-outline-variant/20 mt-4 pt-4 flex justify-between items-center">
           <span class="font-extrabold text-base">Total Paid</span>
-          <span class="font-extrabold text-lg text-primary" id="confirm-total">₹0</span>
+          <span class="font-extrabold text-lg text-primary" id="confirm-total">₹<?= number_format($order['total'], 2) ?></span>
         </div>
         <div class="mt-3 flex items-center gap-2 text-xs text-secondary">
-          <span class="material-symbols-outlined" style="font-size:16px" id="confirm-pm-icon">credit_card</span>
-          <span id="confirm-pm-label">Paid via Card</span>
+          <span class="material-symbols-outlined" style="font-size:16px" id="confirm-pm-icon"><?= $pmIcons[$paymentMode] ?? 'payments' ?></span>
+          <span id="confirm-pm-label"><?= $pmLabels[$paymentMode] ?? 'Paid Securely' ?></span>
         </div>
       </div>
 
       <!-- Action Buttons -->
       <div class="flex flex-col gap-3">
-        <a href="index.html" class="btn-primary w-full text-center">
+        <a href="index.php" class="btn-primary w-full text-center">
           <span class="material-symbols-outlined" style="font-size:20px">home</span>
           Back to Home
         </a>
-        <a href="index.html" class="btn-outline w-full text-center">
+        <a href="index.php" class="btn-outline w-full text-center">
           <span class="material-symbols-outlined" style="font-size:18px">restaurant_menu</span>
           Order Again
         </a>
@@ -259,55 +323,10 @@ let activeStep = 'accepted';
 
 document.addEventListener('DOMContentLoaded', () => {
   launchConfetti();
-  loadOrderData();
   renderTracking();
   startTracking();
   setETA();
 });
-
-/* ===== Load Order Data ===== */
-function loadOrderData() {
-  const order = JSON.parse(localStorage.getItem('zyrop_last_order') || '{}');
-  const meta = order.meta || {};
-  const cart = order.cart || [];
-
-  // Order ID
-  document.getElementById('order-id').textContent = order.orderId || 'ZYR' + Date.now().toString().slice(-7);
-
-  // Address
-  const addr = order.address || ZyropLocation.get();
-  document.getElementById('confirm-addr').textContent = addr?.label || 'Address not available';
-
-  // Items
-  document.getElementById('confirm-items').innerHTML = cart.map(item => `
-    <div class="flex items-center gap-3">
-      <img src="${item.image}" class="w-12 h-12 rounded-xl object-cover flex-shrink-0"
-           onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=100&q=80'"/>
-      <div class="flex-1 min-w-0">
-        <p class="text-sm font-semibold text-on-surface truncate">${item.name}</p>
-        <p class="text-xs text-secondary">${item.qty} × ₹${item.price}</p>
-      </div>
-      <span class="text-sm font-bold">₹${item.qty * item.price}</span>
-    </div>
-  `).join('') || '<p class="text-sm text-secondary">No items found</p>';
-
-  // Summary
-  document.getElementById('confirm-summary').innerHTML = `
-    <div class="flex justify-between"><span class="text-secondary">Subtotal</span><span class="font-semibold">₹${meta.subtotal || 0}</span></div>
-    <div class="flex justify-between"><span class="text-secondary">Delivery</span><span class="font-semibold">₹${meta.delivery ?? 49}</span></div>
-    <div class="flex justify-between"><span class="text-secondary">Platform fee</span><span class="font-semibold">₹${meta.platformFee || 5}</span></div>
-    <div class="flex justify-between"><span class="text-secondary">GST</span><span class="font-semibold">₹${meta.gst || 0}</span></div>
-    ${meta.appliedDiscount > 0 ? `<div class="flex justify-between text-tertiary"><span>Discount</span><span class="font-semibold">-₹${meta.appliedDiscount}</span></div>` : ''}
-  `;
-  document.getElementById('confirm-total').textContent = `₹${meta.total || 0}`;
-
-  // Payment method
-  const pmIcons   = { card:'credit_card', upi:'bolt', cod:'payments' };
-  const pmLabels  = { card:'Paid via Card', upi:'Paid via UPI', cod:'Cash on Delivery' };
-  const pm = order.paymentMethod || 'card';
-  document.getElementById('confirm-pm-icon').textContent = pmIcons[pm];
-  document.getElementById('confirm-pm-label').textContent = pmLabels[pm];
-}
 
 /* ===== Tracking ===== */
 function renderTracking() {
@@ -361,7 +380,6 @@ function setETA() {
   const now = new Date();
   const eta = new Date(now.getTime() + 35 * 60000);
   document.getElementById('eta-time').textContent = `by ${eta.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' })}`;
-  document.getElementById('confirm-time').textContent = `~35 min`;
 }
 
 /* ===== Confetti ===== */

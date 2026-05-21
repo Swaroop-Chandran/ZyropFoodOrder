@@ -1,3 +1,11 @@
+<?php
+session_start();
+// If user is already logged in, redirect to home page
+if (isset($_SESSION['user_id'])) {
+    header("Location: index.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -358,20 +366,40 @@
   /* ---------- Login Handler ---------- */
   function handleLogin(e) {
     e.preventDefault();
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
     const btn = document.getElementById('login-btn');
+    const origHTML = btn.innerHTML;
+
     btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:20px;animation:spin 0.8s linear infinite">progress_activity</span> Logging in…';
     btn.disabled = true;
 
-    // Simulate auth (frontend only)
-    setTimeout(() => {
-      localStorage.setItem('zyrop_user', JSON.stringify({
-        email: document.getElementById('login-email').value,
-        name: 'User',
-        loggedIn: true
-      }));
-      showToast('Welcome back! 🎉', 'success');
-      setTimeout(() => { window.location.href = 'index.html'; }, 800);
-    }, 1200);
+    fetch('auth_api.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'login', email, password })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        localStorage.setItem('zyrop_user', JSON.stringify({
+          email: email,
+          name: data.user.name,
+          loggedIn: true
+        }));
+        showToast(data.message, 'success');
+        setTimeout(() => { window.location.href = 'index.php'; }, 800);
+      } else {
+        showToast(data.message, 'error');
+        btn.innerHTML = origHTML;
+        btn.disabled = false;
+      }
+    })
+    .catch(err => {
+      showToast('An error occurred. Please try again.', 'error');
+      btn.innerHTML = origHTML;
+      btn.disabled = false;
+    });
   }
 
   /* ---------- Signup Handler ---------- */
@@ -388,22 +416,45 @@
     }
     mismatch.classList.add('hidden');
 
+    const fname = document.getElementById('signup-fname').value;
+    const lname = document.getElementById('signup-lname').value;
+    const email = document.getElementById('signup-email').value;
+    const phone = document.getElementById('signup-phone').value;
+    const loc = ZyropLocation.get();
+    const address = loc ? loc.label : '';
+
     const btn = document.getElementById('signup-btn');
+    const origHTML = btn.innerHTML;
     btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:20px;animation:spin 0.8s linear infinite">progress_activity</span> Creating account…';
     btn.disabled = true;
 
-    setTimeout(() => {
-      const fname = document.getElementById('signup-fname').value;
-      const lname = document.getElementById('signup-lname').value;
-      localStorage.setItem('zyrop_user', JSON.stringify({
-        email: document.getElementById('signup-email').value,
-        phone: document.getElementById('signup-phone').value,
-        name: `${fname} ${lname}`,
-        loggedIn: true
-      }));
-      showToast(`Welcome to Zyrop, ${fname}! 🎉`, 'success');
-      setTimeout(() => { window.location.href = 'index.html'; }, 900);
-    }, 1400);
+    fetch('auth_api.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'signup', fname, lname, email, phone, password: pwd, address })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        localStorage.setItem('zyrop_user', JSON.stringify({
+          email: email,
+          phone: phone,
+          name: `${fname} ${lname}`,
+          loggedIn: true
+        }));
+        showToast(data.message, 'success');
+        setTimeout(() => { window.location.href = 'index.php'; }, 900);
+      } else {
+        showToast(data.message, 'error');
+        btn.innerHTML = origHTML;
+        btn.disabled = false;
+      }
+    })
+    .catch(err => {
+      showToast('Registration failed. Please try again.', 'error');
+      btn.innerHTML = origHTML;
+      btn.disabled = false;
+    });
   }
 
   /* ---------- Auto-detect check from URL ---------- */

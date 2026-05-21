@@ -1,3 +1,11 @@
+<?php
+session_start();
+// Redirect to login if user is not authenticated
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,7 +43,7 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-between gap-4 py-4">
 
     <!-- Logo -->
-    <a href="index.html" class="font-extrabold text-xl text-primary whitespace-nowrap flex-shrink-0">
+    <a href="index.php" class="font-extrabold text-xl text-primary whitespace-nowrap flex-shrink-0">
       ZyropFoodOrder
     </a>
 
@@ -58,14 +66,18 @@
       </div>
 
       <!-- Cart button -->
-      <a href="cart.html" class="relative flex items-center gap-2 bg-primary text-on-primary rounded-full px-5 py-2 text-sm font-bold hover:bg-primary-container transition-colors">
+      <a href="cart.php" class="relative flex items-center gap-2 bg-primary text-on-primary rounded-full px-5 py-2 text-sm font-bold hover:bg-primary-container transition-colors">
         <span class="material-symbols-outlined" style="font-size:18px">shopping_cart</span>
         <span class="hidden sm:inline">Cart</span>
         <span class="cart-count-badge" style="display:none; position:absolute; top:-8px; right:-6px; background:#1b1c1c; color:#fff; font-size:10px; font-weight:700; min-width:18px; height:18px; border-radius:9999px; align-items:center; justify-content:center; padding:0 4px;">0</span>
       </a>
 
-      <!-- Account -->
-      <a href="login.html" class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" title="Account">account_circle</a>
+      <!-- Account Info Header Menu -->
+      <div class="flex items-center gap-2 border border-outline-variant/30 rounded-full px-3 py-1 bg-surface-container-low">
+        <span class="material-symbols-outlined text-primary" style="font-size:18px">account_circle</span>
+        <span class="text-xs font-bold text-on-surface truncate max-w-[100px]"><?php echo htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]); ?></span>
+        <a href="logout.php" class="material-symbols-outlined text-secondary hover:text-error transition-colors" style="font-size:16px" title="Logout">logout</a>
+      </div>
     </div>
   </div>
 
@@ -129,7 +141,7 @@
 
 <!-- ===== FLOATING CART (mobile) ===== -->
 <div id="floating-cart" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 hidden">
-  <a href="cart.html" class="flex items-center gap-4 bg-on-background text-surface rounded-2xl px-6 py-4 shadow-2xl font-bold text-sm animate-bounce-in">
+  <a href="cart.php" class="flex items-center gap-4 bg-on-background text-surface rounded-2xl px-6 py-4 shadow-2xl font-bold text-sm animate-bounce-in">
     <span class="material-symbols-outlined" style="font-size:20px">shopping_cart</span>
     <span id="float-cart-info">View Cart</span>
     <span class="bg-primary text-on-primary rounded-full px-3 py-0.5 text-xs" id="float-cart-price">₹0</span>
@@ -157,33 +169,33 @@ const CATEGORIES = [
 
 const FOODS = [
   // Biryani
-  { id:'b1', name:'Hyderabadi Dum Biryani', restaurant:'Biryani House', cat:'biryani', price:220, rating:4.8, ratingCount:2.3, veg:false, time:'30-40', img:'https://images.unsplash.com/photo-1563379091339-03246963d96c?w=400&q=80', badge:'Bestseller' },
-  { id:'b2', name:'Veg Dum Biryani', restaurant:'Spice Garden', cat:'biryani', price:180, rating:4.6, ratingCount:1.2, veg:true, time:'25-35', img:'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=400&q=80', badge:'' },
-  { id:'b3', name:'Chicken Biryani Bowl', restaurant:'Royal Kitchen', cat:'biryani', price:199, rating:4.7, ratingCount:890, veg:false, time:'35-45', img:'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=400&q=80', badge:'20% Off' },
+  { id:'b1', name:'Hyderabadi Dum Biryani', restaurant:'Biryani House', cat:'biryani', price:220, rating:4.8, ratingCount:2.3, veg:false, time:'30-40', img:'https://upload.wikimedia.org/wikipedia/commons/7/75/Hyderabadi_Chicken_biriyani.jpg', badge:'Bestseller' },
+  { id:'b2', name:'Veg Dum Biryani', restaurant:'Spice Garden', cat:'biryani', price:180, rating:4.6, ratingCount:1.2, veg:true, time:'25-35', img:'https://upload.wikimedia.org/wikipedia/commons/3/31/Vegetable_Biryani.jpg', badge:'' },
+  { id:'b3', name:'Chicken Biryani Bowl', restaurant:'Royal Kitchen', cat:'biryani', price:199, rating:4.7, ratingCount:890, veg:false, time:'35-45', img:'https://upload.wikimedia.org/wikipedia/commons/e/e0/Hyderabadi_Chicken_Biryani.jpg', badge:'20% Off' },
   // Pizza
-  { id:'p1', name:'Margherita Classic', restaurant:'Pizza Primo', cat:'pizza', price:249, rating:4.5, ratingCount:3.1, veg:true, time:'20-30', img:'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&q=80', badge:'' },
-  { id:'p2', name:'BBQ Chicken Pizza', restaurant:"Mama's Pizzeria", cat:'pizza', price:349, rating:4.8, ratingCount:4.2, veg:false, time:'25-35', img:'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80', badge:"Chef's Pick" },
-  { id:'p3', name:'Paneer Tikka Pizza', restaurant:'Pizza Primo', cat:'pizza', price:299, rating:4.6, ratingCount:1.8, veg:true, time:'20-30', img:'https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?w=400&q=80', badge:'Veg Special' },
+  { id:'p1', name:'Margherita Classic', restaurant:'Pizza Primo', cat:'pizza', price:249, rating:4.5, ratingCount:3.1, veg:true, time:'20-30', img:'https://upload.wikimedia.org/wikipedia/commons/c/c8/Pizza_Margherita_stu_spivack.jpg', badge:'' },
+  { id:'p2', name:'BBQ Chicken Pizza', restaurant:"Mama's Pizzeria", cat:'pizza', price:349, rating:4.8, ratingCount:4.2, veg:false, time:'25-35', img:'https://upload.wikimedia.org/wikipedia/commons/a/a3/Eq_it-na_pizza-margherita_sep2005_sml.jpg', badge:"Chef's Pick" },
+  { id:'p3', name:'Paneer Tikka Pizza', restaurant:'Pizza Primo', cat:'pizza', price:299, rating:4.6, ratingCount:1.8, veg:true, time:'20-30', img:'https://upload.wikimedia.org/wikipedia/commons/6/6d/Good_Food_Display_-_NCI_Visuals_Online.jpg', badge:'Veg Special' },
   // Burger
-  { id:'bu1', name:'Classic Smash Burger', restaurant:'Urban Bites', cat:'burger', price:179, rating:4.7, ratingCount:5.2, veg:false, time:'15-25', img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80', badge:'Bestseller' },
-  { id:'bu2', name:'Veggie Delight Burger', restaurant:'Green Plates', cat:'burger', price:149, rating:4.4, ratingCount:1.1, veg:true, time:'15-20', img:'https://images.unsplash.com/photo-1550317138-10000687a72b?w=400&q=80', badge:'' },
-  { id:'bu3', name:'Double Patty Whopper', restaurant:'Urban Bites', cat:'burger', price:229, rating:4.9, ratingCount:6.8, veg:false, time:'20-30', img:'https://images.unsplash.com/photo-1596956470007-2bf6095e7e16?w=400&q=80', badge:'🔥 Trending' },
+  { id:'bu1', name:'Classic Smash Burger', restaurant:'Urban Bites', cat:'burger', price:179, rating:4.7, ratingCount:5.2, veg:false, time:'15-25', img:'https://upload.wikimedia.org/wikipedia/commons/c/c7/Smashburger-1.jpg', badge:'Bestseller' },
+  { id:'bu2', name:'Veggie Delight Burger', restaurant:'Green Plates', cat:'burger', price:149, rating:4.4, ratingCount:1.1, veg:true, time:'15-20', img:'https://upload.wikimedia.org/wikipedia/commons/f/fb/Burger_King_Veggie_Burger.jpg', badge:'' },
+  { id:'bu3', name:'Double Patty Whopper', restaurant:'Urban Bites', cat:'burger', price:229, rating:4.9, ratingCount:6.8, veg:false, time:'20-30', img:'https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png', badge:'🔥 Trending' },
   // Sushi
-  { id:'s1', name:'Salmon Nigiri Set', restaurant:'Ocean Harvest', cat:'sushi', price:499, rating:4.9, ratingCount:2.4, veg:false, time:'25-35', img:'https://images.unsplash.com/photo-1553621042-f6e147245754?w=400&q=80', badge:'Premium' },
-  { id:'s2', name:'Veg Maki Roll', restaurant:'Sushi World', cat:'sushi', price:299, rating:4.5, ratingCount:980, veg:true, time:'20-30', img:'https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=400&q=80', badge:'' },
+  { id:'s1', name:'Salmon Nigiri Set', restaurant:'Ocean Harvest', cat:'sushi', price:499, rating:4.9, ratingCount:2.4, veg:false, time:'25-35', img:'https://upload.wikimedia.org/wikipedia/commons/0/07/Salmon_Nigiri.jpg', badge:'Premium' },
+  { id:'s2', name:'Veg Maki Roll', restaurant:'Sushi World', cat:'sushi', price:299, rating:4.5, ratingCount:980, veg:true, time:'20-30', img:'https://upload.wikimedia.org/wikipedia/commons/6/60/Makizushi_cut.jpg', badge:'' },
   // Pasta
-  { id:'pa1', name:'Pasta Arrabiata', restaurant:'Pasta Fresca', cat:'pasta', price:199, rating:4.6, ratingCount:2.1, veg:true, time:'20-30', img:'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&q=80', badge:'' },
-  { id:'pa2', name:'Chicken Alfredo', restaurant:'Pasta Fresca', cat:'pasta', price:259, rating:4.7, ratingCount:1.7, veg:false, time:'25-35', img:'https://images.unsplash.com/photo-1645112411341-6c4fd023714a?w=400&q=80', badge:'Fan Favourite' },
+  { id:'pa1', name:'Pasta Arrabiata', restaurant:'Pasta Fresca', cat:'pasta', price:199, rating:4.6, ratingCount:2.1, veg:true, time:'20-30', img:'https://upload.wikimedia.org/wikipedia/commons/e/e5/Penne_arrabbiata.jpg', badge:'' },
+  { id:'pa2', name:'Chicken Alfredo', restaurant:'Pasta Fresca', cat:'pasta', price:259, rating:4.7, ratingCount:1.7, veg:false, time:'25-35', img:'https://upload.wikimedia.org/wikipedia/commons/9/9d/Fettucine_Alfredo.jpg', badge:'Fan Favourite' },
   // Desserts
-  { id:'d1', name:'Gulab Jamun (8pcs)', restaurant:'Sweet Cravings', cat:'dessert', price:99, rating:4.8, ratingCount:3.6, veg:true, time:'15-20', img:'https://images.unsplash.com/photo-1666537860000-81b6e0e24e2e?w=400&q=80', badge:'Must Try' },
-  { id:'d2', name:'Chocolate Lava Cake', restaurant:'Cafe Delight', cat:'dessert', price:149, rating:4.9, ratingCount:4.1, veg:true, time:'20-25', img:'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&q=80', badge:'🔥 Popular' },
-  { id:'d3', name:'Mango Kulfi', restaurant:'Sweet Cravings', cat:'dessert', price:79, rating:4.7, ratingCount:2.0, veg:true, time:'10-15', img:'https://images.unsplash.com/photo-1567352146305-d98e6f4b0e4c?w=400&q=80', badge:'' },
+  { id:'d1', name:'Gulab Jamun (8pcs)', restaurant:'Sweet Cravings', cat:'dessert', price:99, rating:4.8, ratingCount:3.6, veg:true, time:'15-20', img:'https://upload.wikimedia.org/wikipedia/commons/e/e0/Gulab_jamun_1.jpg', badge:'Must Try' },
+  { id:'d2', name:'Chocolate Lava Cake', restaurant:'Cafe Delight', cat:'dessert', price:149, rating:4.9, ratingCount:4.1, veg:true, time:'20-25', img:'https://upload.wikimedia.org/wikipedia/commons/d/d6/Molten_Chocolate_Cake.jpg', badge:'🔥 Popular' },
+  { id:'d3', name:'Mango Kulfi', restaurant:'Sweet Cravings', cat:'dessert', price:79, rating:4.7, ratingCount:2.0, veg:true, time:'10-15', img:'https://upload.wikimedia.org/wikipedia/commons/d/d1/Mango_Kulfi.jpg', badge:'' },
   // Drinks
-  { id:'dr1', name:'Mango Lassi', restaurant:'Fresh Sip', cat:'drinks', price:89, rating:4.6, ratingCount:1.5, veg:true, time:'10-15', img:'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&q=80', badge:'Fresh' },
-  { id:'dr2', name:'Cold Coffee Shake', restaurant:'Cafe Delight', cat:'drinks', price:119, rating:4.7, ratingCount:2.2, veg:true, time:'10-15', img:'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&q=80', badge:'' },
+  { id:'dr1', name:'Mango Lassi', restaurant:'Fresh Sip', cat:'drinks', price:89, rating:4.6, ratingCount:1.5, veg:true, time:'10-15', img:'https://upload.wikimedia.org/wikipedia/commons/4/47/Tasty_Mango_lassi_picture.JPG', badge:'Fresh' },
+  { id:'dr2', name:'Cold Coffee Shake', restaurant:'Cafe Delight', cat:'drinks', price:119, rating:4.7, ratingCount:2.2, veg:true, time:'10-15', img:'https://upload.wikimedia.org/wikipedia/commons/4/45/A_small_cup_of_coffee.JPG', badge:'' },
   // Healthy
-  { id:'h1', name:'Quinoa Buddha Bowl', restaurant:'Green Plates', cat:'healthy', price:229, rating:4.5, ratingCount:780, veg:true, time:'20-30', img:'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80', badge:'Healthy' },
-  { id:'h2', name:'Grilled Chicken Salad', restaurant:'FitBites', cat:'healthy', price:269, rating:4.6, ratingCount:1.3, veg:false, time:'15-25', img:'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80', badge:'Low Cal' },
+  { id:'h1', name:'Quinoa Buddha Bowl', restaurant:'Green Plates', cat:'healthy', price:229, rating:4.5, ratingCount:780, veg:true, time:'20-30', img:'https://upload.wikimedia.org/wikipedia/commons/2/20/Chickpea_salad.jpg', badge:'Healthy' },
+  { id:'h2', name:'Grilled Chicken Salad', restaurant:'FitBites', cat:'healthy', price:269, rating:4.6, ratingCount:1.3, veg:false, time:'15-25', img:'https://upload.wikimedia.org/wikipedia/commons/6/60/Grilled_chicken_salad.jpg', badge:'Low Cal' },
 ];
 
 /* ===================================================
