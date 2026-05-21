@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Cart — ZyropFoodOrder</title>
+  <meta name="description" content="Review your cart and proceed to checkout. Fast, fresh food delivery at your doorstep."/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/zyrop.css"/>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode:"class",
+      theme:{extend:{colors:{"surface-container-low":"#f5f3f3","surface-container-lowest":"#ffffff","surface-bright":"#fbf9f8","on-error":"#ffffff","on-primary":"#ffffff","outline":"#907065","surface-container-high":"#e9e8e7","on-tertiary":"#ffffff","surface-variant":"#e4e2e2","tertiary":"#006b29","surface-dim":"#dbdad9","on-secondary":"#ffffff","error":"#ba1a1a","surface":"#fbf9f8","primary-fixed":"#ffdbd0","primary-container":"#d24200","primary":"#a83300","error-container":"#ffdad6","on-surface-variant":"#5c4037","secondary":"#5f5e5e","tertiary-container":"#008735","inverse-surface":"#303031","on-background":"#1b1c1c","background":"#fbf9f8","outline-variant":"#e5beb2","inverse-on-surface":"#f2f0f0","surface-tint":"#ac3500","secondary-container":"#e5e2e1","surface-container":"#efeded","primary-fixed-dim":"#ffb59d","on-surface":"#1b1c1c","surface-container-highest":"#e4e2e2","inverse-primary":"#ffb59d"}}}
+    }
+  </script>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+
+<!-- ===== HEADER ===== -->
+<header class="bg-surface border-b border-outline-variant/30 sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-1 text-secondary hover:text-primary transition-colors font-semibold text-sm">
+        <span class="material-symbols-outlined" style="font-size:20px">arrow_back</span>
+        Back to Menu
+      </a>
+      <div class="h-5 w-px bg-outline-variant hidden sm:block"></div>
+      <a href="index.html" class="font-extrabold text-xl text-primary hidden sm:block">ZyropFoodOrder</a>
+    </div>
+    <h1 class="font-extrabold text-lg text-on-surface">Your Cart</h1>
+    <a href="login.html" class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" title="Account">account_circle</a>
+  </div>
+</header>
+
+<!-- ===== STEP PROGRESS ===== -->
+<div class="bg-surface-container-low border-b border-outline-variant/20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-4">
+    <div class="step-bar max-w-sm mx-auto">
+      <div class="step-item active">
+        <div class="step-circle">1</div>
+        <span class="step-label">Cart</span>
+      </div>
+      <div class="step-item">
+        <div class="step-circle">2</div>
+        <span class="step-label">Payment</span>
+      </div>
+      <div class="step-item">
+        <div class="step-circle">3</div>
+        <span class="step-label">Confirm</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-8">
+  <!-- ===== EMPTY STATE ===== -->
+  <div id="empty-cart" class="hidden flex-col items-center justify-center py-24 gap-5 text-center">
+    <div class="text-8xl">🛒</div>
+    <h2 class="text-2xl font-extrabold text-on-surface">Your cart is empty</h2>
+    <p class="text-secondary max-w-xs">Looks like you haven't added anything yet. Explore our menu and discover something delicious!</p>
+    <a href="index.html" class="btn-primary">
+      <span class="material-symbols-outlined" style="font-size:20px">restaurant_menu</span>
+      Browse Menu
+    </a>
+  </div>
+
+  <!-- ===== CART CONTENT ===== -->
+  <div id="cart-content" class="flex flex-col lg:flex-row gap-8">
+
+    <!-- Left: Cart Items + Address -->
+    <div class="flex-1 flex flex-col gap-6">
+
+      <!-- Cart Items -->
+      <div class="bg-white rounded-2xl border border-outline-variant/30 overflow-hidden">
+        <div class="px-6 py-5 border-b border-outline-variant/20 flex items-center justify-between">
+          <h2 class="font-extrabold text-lg text-on-surface">Order Items</h2>
+          <button onclick="clearCart()" class="text-xs font-bold text-error hover:underline flex items-center gap-1">
+            <span class="material-symbols-outlined" style="font-size:16px">delete_sweep</span>
+            Clear all
+          </button>
+        </div>
+        <div id="cart-items-list" class="divide-y divide-outline-variant/20">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Delivery Address -->
+      <div class="bg-white rounded-2xl border border-outline-variant/30 p-6">
+        <h2 class="font-extrabold text-lg text-on-surface mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary" style="font-size:22px">location_on</span>
+          Delivery Address
+        </h2>
+        <div id="address-detected" class="hidden">
+          <div class="flex items-start gap-4 p-4 bg-surface-container-low rounded-xl border border-outline-variant/30 mb-4">
+            <span class="material-symbols-outlined text-tertiary mt-0.5" style="font-size:22px">where_to_vote</span>
+            <div class="flex-1">
+              <p class="font-bold text-sm text-on-surface" id="address-line1">Fetching address…</p>
+              <p class="text-xs text-secondary mt-0.5" id="address-line2"></p>
+            </div>
+            <span class="text-xs font-bold text-tertiary bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">Home</span>
+          </div>
+          <button onclick="changeAddress()" class="text-sm font-semibold text-primary hover:underline flex items-center gap-1">
+            <span class="material-symbols-outlined" style="font-size:16px">edit</span>
+            Change address
+          </button>
+        </div>
+        <div id="address-manual" class="flex flex-col gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1">
+              <label class="text-xs font-semibold text-secondary">Flat / House No.</label>
+              <input id="addr-flat" type="text" class="form-input" placeholder="e.g. Flat 4B, Block A"/>
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-xs font-semibold text-secondary">Street / Area</label>
+              <input id="addr-street" type="text" class="form-input" placeholder="e.g. MG Road"/>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1">
+              <label class="text-xs font-semibold text-secondary">City</label>
+              <input id="addr-city" type="text" class="form-input" placeholder="e.g. Bangalore"/>
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-xs font-semibold text-secondary">Pincode</label>
+              <input id="addr-pin" type="text" class="form-input" placeholder="e.g. 560001"/>
+            </div>
+          </div>
+          <button onclick="detectLocationForCart()" class="flex items-center gap-2 text-primary font-semibold text-sm border border-primary/30 bg-primary/5 rounded-xl px-4 py-2.5 hover:bg-primary/10 transition-colors w-fit">
+            <span class="material-symbols-outlined" style="font-size:18px">my_location</span>
+            Detect my location
+          </button>
+        </div>
+      </div>
+
+      <!-- Promo Code -->
+      <div class="bg-white rounded-2xl border border-outline-variant/30 p-6">
+        <h2 class="font-extrabold text-base text-on-surface mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary" style="font-size:20px">local_offer</span>
+          Promo Code
+        </h2>
+        <div class="flex gap-3">
+          <input id="promo-input" type="text" class="form-input flex-1" placeholder="Enter promo code (try ZYROP50)"/>
+          <button onclick="applyPromo()" class="btn-outline whitespace-nowrap" style="padding:12px 20px;font-size:13px">Apply</button>
+        </div>
+        <p id="promo-msg" class="text-xs mt-2 hidden"></p>
+      </div>
+
+    </div>
+
+    <!-- Right: Order Summary -->
+    <div class="lg:w-[360px] xl:w-[400px] flex-shrink-0">
+      <div class="bg-white rounded-2xl border border-outline-variant/30 p-6 sticky top-24">
+        <h2 class="font-extrabold text-lg text-on-surface mb-5">Order Summary</h2>
+
+        <div class="flex flex-col gap-3 text-sm mb-5">
+          <div class="flex justify-between">
+            <span class="text-secondary">Subtotal (<span id="sum-count">0</span> items)</span>
+            <span class="font-semibold" id="sum-subtotal">₹0</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-secondary">Delivery fee</span>
+            <span class="font-semibold" id="sum-delivery">₹49</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-secondary">Platform fee</span>
+            <span class="font-semibold">₹5</span>
+          </div>
+          <div class="flex justify-between text-tertiary" id="discount-row" style="display:none!important">
+            <span class="font-semibold flex items-center gap-1">
+              <span class="material-symbols-outlined" style="font-size:16px">confirmation_number</span>
+              Promo discount
+            </span>
+            <span class="font-bold" id="sum-discount">-₹0</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-secondary">GST (5%)</span>
+            <span class="font-semibold" id="sum-gst">₹0</span>
+          </div>
+        </div>
+
+        <div class="border-t border-outline-variant/30 pt-4 mb-6">
+          <div class="flex justify-between items-center">
+            <span class="font-extrabold text-lg">Total</span>
+            <span class="font-extrabold text-xl text-primary" id="sum-total">₹0</span>
+          </div>
+          <p class="text-xs text-secondary mt-1">Inclusive of all taxes</p>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center gap-3 text-sm text-secondary bg-surface-container-low rounded-xl p-3">
+            <span class="material-symbols-outlined text-tertiary" style="font-size:20px">timer</span>
+            <span>Estimated delivery: <strong class="text-on-surface">30–45 mins</strong></span>
+          </div>
+          <button onclick="proceedToCheckout()" id="checkout-btn" class="btn-primary w-full text-base">
+            <span class="material-symbols-outlined" style="font-size:20px">payments</span>
+            Proceed to Payment
+          </button>
+          <a href="index.html" class="btn-outline w-full text-center text-sm">
+            <span class="material-symbols-outlined" style="font-size:18px">add_circle</span>
+            Add more items
+          </a>
+        </div>
+
+        <!-- Trust badges -->
+        <div class="mt-6 pt-5 border-t border-outline-variant/20 flex items-center justify-around text-center">
+          <div class="flex flex-col items-center gap-1">
+            <span class="material-symbols-outlined text-tertiary" style="font-size:24px">verified_user</span>
+            <span class="text-xs text-secondary font-medium">Secure</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <span class="material-symbols-outlined text-tertiary" style="font-size:24px">local_shipping</span>
+            <span class="text-xs text-secondary font-medium">Fast Delivery</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <span class="material-symbols-outlined text-tertiary" style="font-size:24px">star</span>
+            <span class="text-xs text-secondary font-medium">Top Rated</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="toast-container"></div>
+<script src="js/cart.js"></script>
+<script>
+const DELIVERY_FEE = 49;
+const PLATFORM_FEE = 5;
+const GST_RATE = 0.05;
+const PROMO_CODES = { 'ZYROP50': 50, 'FIRST100': 100, 'SAVE30': 30 };
+let appliedDiscount = 0;
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderCart();
+  loadAddress();
+});
+
+window.addEventListener('zyrop:cart-updated', renderCart);
+
+/* ===== Render Cart Items ===== */
+function renderCart() {
+  const cart = ZyropCart.getCart();
+  const empty = document.getElementById('empty-cart');
+  const content = document.getElementById('cart-content');
+
+  if (cart.length === 0) {
+    empty.classList.remove('hidden');
+    empty.classList.add('flex');
+    content.classList.add('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+  empty.classList.remove('flex');
+  content.classList.remove('hidden');
+
+  document.getElementById('cart-items-list').innerHTML = cart.map(item => `
+    <div class="flex gap-4 p-5 hover:bg-surface-container-low/50 transition-colors animate-fade-in" id="cart-row-${item.id}">
+      <img src="${item.image}" alt="${item.name}" class="w-20 h-20 rounded-xl object-cover flex-shrink-0"
+           onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&q=80'"/>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-4 h-4 rounded border-2 flex items-center justify-center text-[9px] font-bold ${item.veg ? 'border-green-600 text-green-600' : 'border-red-600 text-red-600'}">●</span>
+              <h3 class="font-bold text-sm text-on-surface leading-snug truncate max-w-[160px]">${item.name}</h3>
+            </div>
+            <p class="text-xs text-secondary mt-0.5">${item.restaurant}</p>
+          </div>
+          <button onclick="removeItem('${item.id}')" class="text-secondary hover:text-error transition-colors flex-shrink-0">
+            <span class="material-symbols-outlined" style="font-size:18px">close</span>
+          </button>
+        </div>
+        <div class="flex items-center justify-between mt-3">
+          <div class="qty-stepper">
+            <button class="qty-btn" onclick="cartQty('${item.id}',-1)">−</button>
+            <span class="qty-count" id="cart-qty-${item.id}">${item.qty}</span>
+            <button class="qty-btn" onclick="cartQty('${item.id}',1)">+</button>
+          </div>
+          <span class="font-extrabold text-sm text-on-surface">₹${item.price * item.qty}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  updateSummary();
+}
+
+function cartQty(id, delta) {
+  if (delta > 0) ZyropCart.incrementItem(id);
+  else ZyropCart.decrementItem(id);
+  renderCart();
+}
+
+function removeItem(id) {
+  ZyropCart.removeItem(id);
+  renderCart();
+  showToast('Item removed from cart', 'info');
+}
+
+function clearCart() {
+  ZyropCart.clearCart();
+  renderCart();
+  showToast('Cart cleared', 'info');
+}
+
+/* ===== Summary ===== */
+function updateSummary() {
+  const cart = ZyropCart.getCart();
+  const subtotal = ZyropCart.getSubtotal();
+  const count = ZyropCart.getTotalCount();
+  const freeDelivery = subtotal >= 499;
+  const delivery = freeDelivery ? 0 : DELIVERY_FEE;
+  const gst = Math.round((subtotal + delivery + PLATFORM_FEE) * GST_RATE);
+  const total = subtotal + delivery + PLATFORM_FEE + gst - appliedDiscount;
+
+  document.getElementById('sum-count').textContent = count;
+  document.getElementById('sum-subtotal').textContent = `₹${subtotal}`;
+  document.getElementById('sum-delivery').textContent = freeDelivery ? `₹0 🎉` : `₹${delivery}`;
+  document.getElementById('sum-gst').textContent = `₹${gst}`;
+  document.getElementById('sum-total').textContent = `₹${Math.max(0,total)}`;
+
+  const discRow = document.getElementById('discount-row');
+  if (appliedDiscount > 0) {
+    discRow.style.display = 'flex';
+    document.getElementById('sum-discount').textContent = `-₹${appliedDiscount}`;
+  } else {
+    discRow.style.display = 'none';
+  }
+}
+
+/* ===== Promo ===== */
+function applyPromo() {
+  const code = document.getElementById('promo-input').value.trim().toUpperCase();
+  const msg = document.getElementById('promo-msg');
+  if (PROMO_CODES[code]) {
+    appliedDiscount = PROMO_CODES[code];
+    msg.className = 'text-xs mt-2 text-tertiary font-semibold';
+    msg.textContent = `🎉 Promo applied! You save ₹${appliedDiscount}`;
+    msg.classList.remove('hidden');
+    updateSummary();
+    showToast(`Promo code applied! ₹${appliedDiscount} off 🎉`, 'success');
+  } else {
+    appliedDiscount = 0;
+    msg.className = 'text-xs mt-2 text-error font-semibold';
+    msg.textContent = 'Invalid promo code. Try ZYROP50';
+    msg.classList.remove('hidden');
+    updateSummary();
+  }
+}
+
+/* ===== Address ===== */
+function loadAddress() {
+  const loc = ZyropLocation.get();
+  const detected = document.getElementById('address-detected');
+  const manual = document.getElementById('address-manual');
+  if (loc && loc.label) {
+    const parts = loc.label.split(',');
+    document.getElementById('address-line1').textContent = parts.slice(0,2).join(',').trim();
+    document.getElementById('address-line2').textContent = parts.slice(2).join(',').trim();
+    detected.classList.remove('hidden');
+    manual.classList.add('hidden');
+  }
+}
+
+function changeAddress() {
+  document.getElementById('address-detected').classList.add('hidden');
+  document.getElementById('address-manual').classList.remove('hidden');
+}
+
+function detectLocationForCart() {
+  showToast('Detecting location…', 'info');
+  ZyropLocation.detect(
+    (loc) => {
+      ZyropLocation.save(loc);
+      loadAddress();
+      showToast('Location updated! 📍', 'success');
+    },
+    (err) => showToast(err, 'error')
+  );
+}
+
+/* ===== Checkout ===== */
+function proceedToCheckout() {
+  const cart = ZyropCart.getCart();
+  if (cart.length === 0) { showToast('Your cart is empty!', 'error'); return; }
+
+  // Save address from manual inputs if shown
+  const manualVisible = !document.getElementById('address-manual').classList.contains('hidden');
+  if (manualVisible) {
+    const flat = document.getElementById('addr-flat').value;
+    const street = document.getElementById('addr-street').value;
+    const city = document.getElementById('addr-city').value;
+    const pin = document.getElementById('addr-pin').value;
+    if (!flat || !city) {
+      showToast('Please enter your delivery address', 'error');
+      return;
+    }
+    const label = [flat, street, city, pin].filter(Boolean).join(', ');
+    ZyropLocation.save({ label, full: label });
+  }
+
+  // Save order metadata
+  const subtotal = ZyropCart.getSubtotal();
+  const freeDelivery = subtotal >= 499;
+  const delivery = freeDelivery ? 0 : DELIVERY_FEE;
+  const gst = Math.round((subtotal + delivery + PLATFORM_FEE) * GST_RATE);
+  const total = Math.max(0, subtotal + delivery + PLATFORM_FEE + gst - appliedDiscount);
+  localStorage.setItem('zyrop_order_meta', JSON.stringify({ subtotal, delivery, gst, appliedDiscount, total, platformFee: PLATFORM_FEE }));
+
+  const btn = document.getElementById('checkout-btn');
+  btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:20px;animation:spin 0.8s linear infinite">progress_activity</span> Redirecting…';
+  btn.disabled = true;
+  setTimeout(() => { window.location.href = 'checkout.html'; }, 600);
+}
+</script>
+</body>
+</html>

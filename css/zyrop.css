@@ -1,14 +1,390 @@
+/* =========================================================
+   ZyropFoodOrder — Shared Stylesheet
+   ========================================================= */
+
+/* ---------- Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
 body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    scroll-behavior: smooth;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
 }
+
+/* ---------- Scrollbar ---------- */
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #e5beb2; border-radius: 9999px; }
+
+/* ---------- Material Icons ---------- */
 .material-symbols-outlined {
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  user-select: none;
 }
-.hide-scrollbar::-webkit-scrollbar {
-    display: none;
+.material-symbols-outlined.filled {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
-.hide-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+
+/* ---------- Page transitions ---------- */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes bounceIn {
+  0%   { opacity: 0; transform: scale(0.3); }
+  50%  { opacity: 1; transform: scale(1.05); }
+  70%  { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+@keyframes pulse-ring {
+  0%   { transform: scale(0.8); opacity: 1; }
+  80%, 100% { transform: scale(2); opacity: 0; }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes shimmer {
+  0%   { background-position: -468px 0; }
+  100% { background-position: 468px 0; }
+}
+@keyframes checkmark {
+  0%   { stroke-dashoffset: 100; }
+  100% { stroke-dashoffset: 0; }
+}
+@keyframes progress-step {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+.animate-fade-in-up   { animation: fadeInUp 0.5s ease both; }
+.animate-fade-in      { animation: fadeIn 0.4s ease both; }
+.animate-slide-right  { animation: slideInRight 0.4s ease both; }
+.animate-slide-left   { animation: slideInLeft 0.4s ease both; }
+.animate-scale-in     { animation: scaleIn 0.35s ease both; }
+.animate-bounce-in    { animation: bounceIn 0.6s ease both; }
+
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+
+/* ---------- Cart Badge ---------- */
+.cart-badge {
+  position: absolute;
+  top: -6px; right: -8px;
+  background: #a83300;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 4px;
+  transition: transform 0.2s ease;
+}
+.cart-badge.bump { animation: bounceIn 0.4s ease; }
+
+/* ---------- Toast Notification ---------- */
+#toast-container {
+  position: fixed; bottom: 24px; right: 24px;
+  z-index: 9999;
+  display: flex; flex-direction: column; gap: 10px;
+  pointer-events: none;
+}
+.toast {
+  background: #1b1c1c;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex; align-items: center; gap-10px;
+  gap: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  animation: slideInRight 0.3s ease both;
+  pointer-events: all;
+  max-width: 320px;
+}
+.toast.success { border-left: 4px solid #006b29; }
+.toast.error   { border-left: 4px solid #ba1a1a; }
+.toast.info    { border-left: 4px solid #a83300; }
+.toast-icon { font-size: 20px; }
+.toast.hide { opacity: 0; transform: translateX(40px); transition: all 0.3s ease; }
+
+/* ---------- Skeleton Loader ---------- */
+.skeleton {
+  background: linear-gradient(90deg, #efeded 25%, #e4e2e2 50%, #efeded 75%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+  border-radius: 8px;
+}
+
+/* ---------- Food Card ---------- */
+.food-card {
+  border-radius: 20px;
+  overflow: hidden;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  background: #fff;
+  border: 1px solid rgba(229,190,178,0.3);
+}
+.food-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(168,51,0,0.12);
+}
+.food-card img {
+  transition: transform 0.5s ease;
+}
+.food-card:hover img {
+  transform: scale(1.06);
+}
+
+/* ---------- Quantity Stepper ---------- */
+.qty-stepper {
+  display: flex; align-items: center; gap: 0;
+  border: 1.5px solid #e5beb2;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+.qty-btn {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 18px;
+  color: #a83300;
+  transition: background 0.15s;
+  border: none;
+  outline: none;
+}
+.qty-btn:hover { background: #ffdbd0; }
+.qty-count {
+  min-width: 32px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1b1c1c;
+}
+
+/* ---------- Step Progress Bar ---------- */
+.step-bar {
+  display: flex; align-items: center; gap: 0;
+}
+.step-item {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  flex: 1;
+  position: relative;
+}
+.step-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 16px; left: 50%; right: -50%;
+  height: 2px;
+  background: #e5beb2;
+  z-index: 0;
+}
+.step-item.done:not(:last-child)::after { background: #a83300; }
+.step-circle {
+  width: 32px; height: 32px;
+  border-radius: 9999px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+  background: #efeded;
+  color: #5c4037;
+  z-index: 1;
+  transition: all 0.3s ease;
+  border: 2px solid #e5beb2;
+}
+.step-item.active .step-circle {
+  background: #a83300; color: #fff; border-color: #a83300;
+}
+.step-item.done .step-circle {
+  background: #006b29; color: #fff; border-color: #006b29;
+}
+.step-label {
+  font-size: 11px; font-weight: 600; color: #907065;
+  white-space: nowrap;
+}
+.step-item.active .step-label { color: #a83300; }
+.step-item.done .step-label   { color: #006b29; }
+
+/* ---------- Order Status Track ---------- */
+.track-step {
+  display: flex; align-items: flex-start; gap: 16px;
+  position: relative;
+}
+.track-step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 15px; top: 32px;
+  width: 2px;
+  height: calc(100% + 8px);
+  background: #e5beb2;
+}
+.track-step.done::before { background: #006b29; }
+.track-dot {
+  width: 32px; height: 32px; flex-shrink: 0;
+  border-radius: 9999px;
+  display: flex; align-items: center; justify-content: center;
+  background: #efeded; border: 2px solid #e5beb2;
+  z-index: 1;
+}
+.track-step.done .track-dot   { background: #006b29; border-color: #006b29; }
+.track-step.active .track-dot { background: #a83300; border-color: #a83300; animation: pulse-ring 1.5s ease infinite; }
+
+/* ---------- Auth Tabs ---------- */
+.auth-tab-indicator {
+  position: absolute; bottom: 0; left: 0;
+  height: 3px; border-radius: 9999px;
+  background: #a83300;
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ---------- Input Field ---------- */
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid #e5beb2;
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #1b1c1c;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-input:focus {
+  border-color: #a83300;
+  box-shadow: 0 0 0 3px rgba(168,51,0,0.12);
+}
+.form-input::placeholder { color: #907065; }
+.input-group { position: relative; }
+.input-icon {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  color: #907065; pointer-events: none;
+}
+.input-icon + .form-input { padding-left: 44px; }
+.input-toggle {
+  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  color: #907065; cursor: pointer; background: none; border: none; outline: none;
+}
+
+/* ---------- Primary Button ---------- */
+.btn-primary {
+  background: #a83300;
+  color: #fff;
+  padding: 14px 32px;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 15px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  border: none; cursor: pointer;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  box-shadow: 0 4px 16px rgba(168,51,0,0.25);
+}
+.btn-primary:hover  { background: #832600; box-shadow: 0 6px 20px rgba(168,51,0,0.35); }
+.btn-primary:active { transform: scale(0.97); }
+
+/* ---------- Outline Button ---------- */
+.btn-outline {
+  background: transparent;
+  color: #a83300;
+  padding: 12px 28px;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 14px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  border: 1.5px solid #a83300;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-outline:hover  { background: #ffdbd0; }
+.btn-outline:active { transform: scale(0.97); }
+
+/* ---------- Payment Card ---------- */
+.payment-method-card {
+  border: 2px solid #e5beb2;
+  border-radius: 16px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex; align-items: center; gap: 14px;
+}
+.payment-method-card:hover      { border-color: #a83300; background: #fff8f6; }
+.payment-method-card.selected   { border-color: #a83300; background: #ffdbd0; }
+
+/* ---------- Checkmark SVG animation ---------- */
+.check-circle svg .check-path {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: checkmark 0.6s ease 0.4s forwards;
+}
+.check-circle svg .circle-path {
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  animation: checkmark 0.6s ease 0s forwards;
+}
+
+/* ---------- Location badge ---------- */
+.location-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #ffdbd0;
+  color: #832600;
+  font-size: 13px; font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 9999px;
+}
+
+/* ---------- Glassmorphism card ---------- */
+.glass-card {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(229,190,178,0.4);
+}
+
+/* ---------- Responsive nav drawer ---------- */
+.nav-drawer {
+  position: fixed; inset: 0; z-index: 100;
+  pointer-events: none;
+}
+.nav-drawer.open { pointer-events: all; }
+.nav-drawer-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.4);
+  opacity: 0; transition: opacity 0.3s;
+}
+.nav-drawer.open .nav-drawer-overlay { opacity: 1; }
+.nav-drawer-panel {
+  position: absolute; top: 0; right: 0;
+  width: min(360px, 90vw);
+  height: 100%;
+  background: #fbf9f8;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  overflow-y: auto;
+}
+.nav-drawer.open .nav-drawer-panel { transform: translateX(0); }
