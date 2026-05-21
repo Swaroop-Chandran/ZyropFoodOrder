@@ -1,3 +1,4 @@
+<?php require_once 'config.php'; ?>
 <!DOCTYPE html>
 
 <html class="light" lang="en"><head>
@@ -15,43 +16,29 @@
 <header class="bg-surface dark:bg-on-background shadow-sm docked full-width top-0 sticky z-50">
 <div class="flex justify-between items-center w-full px-margin-desktop h-20 max-w-container-max-width mx-auto">
 <div class="flex items-center gap-gutter">
-<a href="index.html" class="text-headline-md font-headline-md font-extrabold text-primary dark:text-primary-fixed">ZyropFoodOrder</a>
+<a href="index.php" class="text-headline-md font-headline-md font-extrabold text-primary dark:text-primary-fixed">ZyropFoodOrder</a>
 <div class="hidden md:flex items-center bg-surface-container rounded-full px-4 py-2 gap-2 w-80">
 <span class="material-symbols-outlined text-secondary" data-icon="search">search</span>
 <input class="bg-transparent border-none focus:ring-0 text-body-md font-body-md w-full" placeholder="Search for food, restaurants..." type="text"/>
 </div>
 </div>
 <nav class="hidden lg:flex items-center gap-6 flex-wrap">
-<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-md text-label-md whitespace-nowrap" href="index.html">Browse</a>
-<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-label-md text-label-md whitespace-nowrap" href="order-track.html">Track</a>
-<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-label-md text-label-md whitespace-nowrap" href="cart.html">Cart</a>
-<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-label-md text-label-md whitespace-nowrap" href="partner-dashboard.html">Partner</a>
-<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-label-md text-label-md whitespace-nowrap" href="admin-panel.html">Admin</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-md text-label-md whitespace-nowrap" href="index.php">Browse</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-label-md text-label-md whitespace-nowrap" href="order-track.php">Track Order</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-label-md text-label-md whitespace-nowrap" href="cart.php">Cart</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-label-md text-label-md whitespace-nowrap" href="checkout.php">Checkout</a>
 </nav>
 <div class="flex items-center gap-6">
 <div class="flex items-center gap-4">
-<button class="material-symbols-outlined text-on-surface-variant" data-icon="notifications">notifications</button>
-<button class="material-symbols-outlined text-on-surface-variant" data-icon="account_circle">account_circle</button>
+<?php echo renderNotifications(); ?>
+<?php echo renderAccountMenu(); ?>
 </div>
 <div class="h-8 w-[1px] bg-outline-variant"></div>
-<a class="bg-primary text-on-primary px-6 py-2 rounded-full font-label-md text-label-md active:scale-95 transition-transform duration-150 inline-block text-center" href="cart.html">Cart</a>
+<a class="bg-primary text-on-primary px-6 py-2 rounded-full font-label-md text-label-md active:scale-95 transition-transform duration-150 inline-block text-center" href="cart.php">Cart (<?php echo getCartTotalCount(); ?>)</a>
 </div>
 </div>
 </header>
-<div class="bg-surface-container border-b border-outline-variant/40">
-<div class="max-w-container-max-width mx-auto px-margin-desktop py-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-label-sm font-label-sm">
-<span class="text-on-surface-variant font-semibold uppercase tracking-wide">Platform</span>
-<a class="text-secondary hover:text-primary transition-colors" href="delivery-queue.html">Delivery queue</a>
-<span class="text-outline-variant hidden sm:inline">|</span>
-<a class="text-secondary hover:text-primary transition-colors" href="board.html">Board</a>
-<span class="text-outline-variant hidden sm:inline">|</span>
-<a class="text-secondary hover:text-primary transition-colors" href="restaurant-menu.html">Restaurant menu</a>
-<span class="text-outline-variant hidden sm:inline">|</span>
-<a class="text-secondary hover:text-primary transition-colors" href="menu-manager.html">Menu manager</a>
-<span class="text-outline-variant hidden sm:inline">|</span>
-<a class="text-secondary hover:text-primary transition-colors" href="checkout.html">Checkout</a>
-</div>
-</div>
+
 <main class="max-w-container-max-width mx-auto px-margin-desktop py-10 flex flex-col gap-10">
 <!-- Hero / Special Offers Banner -->
 <section class="relative h-[400px] w-full rounded-xl overflow-hidden shadow-lg group">
@@ -67,10 +54,6 @@
 <section>
 <div class="flex justify-between items-end mb-6">
 <h2 class="text-headline-lg font-headline-lg text-on-surface">What's on your mind?</h2>
-<div class="flex gap-2">
-<button class="p-2 rounded-full border border-outline-variant hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined">chevron_left</span></button>
-<button class="p-2 rounded-full border border-outline-variant hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined">chevron_right</span></button>
-</div>
 </div>
 <div class="flex gap-gutter overflow-x-auto hide-scrollbar pb-4">
 <!-- Pizza -->
@@ -134,9 +117,9 @@
 <div class="p-4">
 <h3 class="text-label-md font-label-md mb-1">Mama's Pizzeria</h3>
 <p class="text-body-md font-body-md text-secondary mb-2">Large Pepperoni Feast</p>
-<div class="flex justify-between items-center">
-<span class="text-primary font-bold">$24.90</span>
-<button class="text-primary text-label-sm font-label-sm border border-primary px-3 py-1 rounded-full hover:bg-primary hover:text-white transition-colors">Reorder</button>
+<div class="flex justify-between items-center h-10">
+<span class="text-primary font-bold">₹249</span>
+<?php echo renderCartControls(6); ?>
 </div>
 </div>
 </div>
@@ -146,9 +129,9 @@
 <div class="p-4">
 <h3 class="text-label-md font-label-md mb-1">Ocean Harvest</h3>
 <p class="text-body-md font-body-md text-secondary mb-2">Salmon Poke Bowl</p>
-<div class="flex justify-between items-center">
-<span class="text-primary font-bold">$18.50</span>
-<button class="text-primary text-label-sm font-label-sm border border-primary px-3 py-1 rounded-full hover:bg-primary hover:text-white transition-colors">Reorder</button>
+<div class="flex justify-between items-center h-10">
+<span class="text-primary font-bold">₹185</span>
+<?php echo renderCartControls(7); ?>
 </div>
 </div>
 </div>
@@ -169,7 +152,7 @@
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
 <!-- Restaurant Card 1 -->
-<a href="restaurant-menu.html" class="group cursor-pointer block text-inherit no-underline rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
+<a href="restaurant-menu.php" class="group cursor-pointer block text-inherit no-underline rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
 <div class="relative rounded-2xl overflow-hidden mb-4 shadow-low hover:shadow-medium transition-all duration-300">
 <img class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500" data-alt="An upscale restaurant interior with warm ambient lighting, elegant wooden tables, and sophisticated table settings. The atmosphere is refined and professional, conveying a high-end dining experience. The color palette features neutral earth tones and soft highlights, perfect for a premium brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuACPe1OwcnqiSYz6mGkYPwpTwUZkoQT8Jeq336MHTLd5-szfhdGafbxKuJ3QVMBjxqcxm4UwTDipbBKsEECFSl_VHIJI58oJjjfYhQRcILi8-eedqeW9Mmlq_MJCKbX6yX6excKavJXTN1YruIGDT445j8SmCA9w4wNuJUqWrKgCGPpn5cc-E6Ph19OOcwM0Lu_vntB6rnd88Rr2jXfoBPCYqOX-gehGl-S_UIFfvPKeRPs0iP4Kc_0ZbV9KJ8H6mFYWZPD6gO7v2U"/>
 <div class="absolute top-4 right-4 bg-white px-2 py-1 rounded flex items-center gap-1 shadow-sm">
@@ -183,7 +166,7 @@
 <div class="flex justify-between items-start">
 <div>
 <h4 class="text-headline-md font-headline-md mb-1">The Steakhouse Grill</h4>
-<p class="text-body-md font-body-md text-secondary">Premium Steaks • American • $$$</p>
+<p class="text-body-md font-body-md text-secondary">Premium Steaks • American • ₹₹₹</p>
 </div>
 <div class="text-right">
 <span class="text-label-md font-label-md block">25-35 min</span>
@@ -206,7 +189,7 @@
 <div class="flex justify-between items-start">
 <div>
 <h4 class="text-headline-md font-headline-md mb-1">Urban Bites</h4>
-<p class="text-body-md font-body-md text-secondary">Burgers • Fries • $$</p>
+<p class="text-body-md font-body-md text-secondary">Burgers • Fries • ₹₹</p>
 </div>
 <div class="text-right">
 <span class="text-label-md font-label-md block">15-25 min</span>
@@ -226,7 +209,7 @@
 <div class="flex justify-between items-start">
 <div>
 <h4 class="text-headline-md font-headline-md mb-1">Pasta Fresca</h4>
-<p class="text-body-md font-body-md text-secondary">Italian • Handmade Pasta • $$</p>
+<p class="text-body-md font-body-md text-secondary">Italian • Handmade Pasta • ₹₹</p>
 </div>
 <div class="text-right">
 <span class="text-label-md font-label-md block">30-40 min</span>
@@ -246,7 +229,7 @@
 <div class="flex justify-between items-start">
 <div>
 <h4 class="text-headline-md font-headline-md mb-1">Miyabi Sushi</h4>
-<p class="text-body-md font-body-md text-secondary">Japanese • Seafood • $$$</p>
+<p class="text-body-md font-body-md text-secondary">Japanese • Seafood • ₹₹₹</p>
 </div>
 <div class="text-right">
 <span class="text-label-md font-label-md block">40-50 min</span>
@@ -266,7 +249,7 @@
 <div class="flex justify-between items-start">
 <div>
 <h4 class="text-headline-md font-headline-md mb-1">Green Leaf Kitchen</h4>
-<p class="text-body-md font-body-md text-secondary">Vegetarian • Salads • $$</p>
+<p class="text-body-md font-body-md text-secondary">Vegetarian • Salads • ₹₹</p>
 </div>
 <div class="text-right">
 <span class="text-label-md font-label-md block">20-30 min</span>
@@ -286,7 +269,7 @@
 <div class="flex justify-between items-start">
 <div>
 <h4 class="text-headline-md font-headline-md mb-1">Taco Fiesta</h4>
-<p class="text-body-md font-body-md text-secondary">Mexican • Street Food • $</p>
+<p class="text-body-md font-body-md text-secondary">Mexican • Street Food • ₹</p>
 </div>
 <div class="text-right">
 <span class="text-label-md font-label-md block">15-20 min</span>
@@ -316,7 +299,7 @@
 <h5 class="text-label-md font-bold text-on-surface">Company</h5>
 <nav class="flex flex-col gap-2">
 <a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">About Us</a>
-<a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="partner-dashboard.html">Partner With Us</a>
+<a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="partner-dashboard.php">Partner With Us</a>
 <a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Careers</a>
 <a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Press</a>
 </nav>
@@ -324,13 +307,13 @@
 <div class="flex flex-col gap-4">
 <h5 class="text-label-md font-bold text-on-surface">Platform</h5>
 <nav class="flex flex-col gap-2">
-<a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="order-track.html">Order tracking</a>
-<a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="cart.html">Cart</a>
-<a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="checkout.html">Checkout</a>
-<a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="delivery-queue.html">Delivery queue</a>
-<a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="board.html">Board</a>
-<a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="restaurant-menu.html">Restaurant menu</a>
-<a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="menu-manager.html">Menu manager</a>
+<a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="order-track.php">Order tracking</a>
+<a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="cart.php">Cart</a>
+<a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="checkout.php">Checkout</a>
+<a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="delivery-queue.php">Delivery queue</a>
+<a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="board.php">Board</a>
+<a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="restaurant-menu.php">Restaurant menu</a>
+<a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="menu-manager.php">Menu manager</a>
 </nav>
 </div>
 <div class="flex flex-col gap-4">

@@ -1,3 +1,4 @@
+<?php require_once 'config.php'; ?>
 <!DOCTYPE html>
 <html class="light" lang="en">
 <head>
@@ -11,33 +12,20 @@
 <script src="js/tailwind-theme.js"></script>
 </head>
 <body class="bg-surface text-on-surface min-h-screen flex flex-col">
-<header class="bg-surface shadow-sm sticky top-0 z-50">
+<header class="bg-surface dark:bg-on-background shadow-sm docked full-width top-0 sticky z-50">
 <div class="flex justify-between items-center w-full px-margin-desktop h-20 max-w-container-max-width mx-auto">
-<a href="index.html" class="text-headline-md font-extrabold text-primary">ZyropFoodOrder</a>
+<a href="index.php" class="text-headline-md font-headline-md font-extrabold text-primary dark:text-primary-fixed">ZyropFoodOrder</a>
 <nav class="hidden lg:flex items-center gap-6">
-<a class="text-secondary hover:text-primary font-label-md" href="index.html">Browse</a>
-<a class="text-secondary hover:text-primary font-label-md" href="order-track.html">Track</a>
-<a class="text-secondary hover:text-primary font-label-md" href="cart.html">Cart</a>
-<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-md" href="partner-dashboard.html">Partner</a>
-<a class="text-secondary hover:text-primary font-label-md" href="admin-panel.html">Admin</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-label-md text-label-md whitespace-nowrap" href="index.php">Browse</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-label-md text-label-md whitespace-nowrap" href="order-track.php">Track</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-label-md text-label-md whitespace-nowrap" href="cart.php">Cart</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-md text-label-md whitespace-nowrap" href="partner-dashboard.php">Partner</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-label-md text-label-md whitespace-nowrap" href="admin-panel.php">Admin</a>
 </nav>
-<a class="text-label-md text-primary font-semibold hidden sm:inline" href="menu-manager.html">Edit menu</a>
+<span class="text-label-sm text-secondary dark:text-secondary-fixed-dim hidden sm:block">Partner</span>
 </div>
 </header>
-<div class="bg-surface-container border-b border-outline-variant/40">
-<div class="max-w-container-max-width mx-auto px-margin-desktop py-2 flex flex-wrap gap-x-4 gap-y-2 text-label-sm">
-<span class="text-on-surface-variant font-semibold uppercase">Platform</span>
-<a class="text-secondary hover:text-primary" href="delivery-queue.html">Delivery queue</a>
-<span class="text-outline-variant hidden sm:inline">|</span>
-<a class="text-secondary hover:text-primary" href="board.html">Board</a>
-<span class="text-outline-variant hidden sm:inline">|</span>
-<a class="text-secondary hover:text-primary" href="restaurant-menu.html">Restaurant menu</a>
-<span class="text-outline-variant hidden sm:inline">|</span>
-<a class="text-secondary hover:text-primary" href="menu-manager.html">Menu manager</a>
-<span class="text-outline-variant hidden sm:inline">|</span>
-<a class="text-secondary hover:text-primary" href="checkout.html">Checkout</a>
-</div>
-</div>
+
 <main class="flex-1 max-w-container-max-width mx-auto w-full px-margin-desktop py-10">
 <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-8">
 <div>
@@ -46,14 +34,14 @@
 <p class="text-body-md text-on-surface-variant mt-1">Store #ZY-104 · Open until 11:00 PM</p>
 </div>
 <div class="flex flex-wrap gap-2">
-<a href="menu-manager.html" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-on-primary font-label-md">Menu manager</a>
-<a href="restaurant-menu.html" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-outline-variant font-label-md hover:bg-surface-container-high">Live menu preview</a>
+<a href="menu-manager.php" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-on-primary font-label-md">Menu manager</a>
+<a href="restaurant-menu.php" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-outline-variant font-label-md hover:bg-surface-container-high">Live menu preview</a>
 </div>
 </div>
 <div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter mb-10">
 <div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/30">
 <p class="text-label-sm text-secondary">Net sales today</p>
-<p class="text-headline-md font-bold text-on-surface mt-1">$4,812</p>
+<p class="text-headline-md font-bold text-on-surface mt-1">₹48,120</p>
 </div>
 <div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/30">
 <p class="text-label-sm text-secondary">Orders</p>
@@ -67,7 +55,7 @@
 <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/40 overflow-hidden">
 <div class="px-5 py-4 border-b border-outline-variant/40 flex flex-wrap justify-between gap-2 items-center">
 <h2 class="text-headline-md font-headline-md">Live orders</h2>
-<a href="board.html" class="text-label-sm font-semibold text-primary">Open kitchen board</a>
+<a href="board.php" class="text-label-sm font-semibold text-primary">Open kitchen board</a>
 </div>
 <table class="w-full text-left text-label-sm">
 <thead class="bg-surface-container text-on-surface-variant uppercase text-[11px]">
@@ -103,7 +91,7 @@
 </main>
 <footer class="bg-surface-container-highest border-t mt-auto">
 <div class="py-6 px-margin-desktop max-w-container-max-width mx-auto text-label-sm text-on-surface-variant flex justify-between">
-<a href="index.html" class="hover:text-primary">View storefront</a>
+<a href="index.php" class="hover:text-primary">View storefront</a>
 <p>© 2026 ZyropFoodOrder</p>
 </div>
 </footer>
