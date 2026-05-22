@@ -1,6 +1,5 @@
 <?php
 session_start();
-// Redirect to login if user is not authenticated
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
@@ -12,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ZyropFoodOrder — Order Food Online</title>
-  <meta name="description" content="Browse hundreds of food items from top restaurants near you. Order pizza, burgers, biryani and more. Fast delivery at your doorstep."/>
+  <meta name="description" content="Browse delicious food items from top restaurants near you. Order biryani, curry, dosa, pizza and more. Fast delivery at your doorstep."/>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -85,9 +84,9 @@ if (!isset($_SESSION['user_id'])) {
   <div class="sm:hidden px-4 pb-3">
     <div class="flex items-center bg-surface-container rounded-full px-4 py-2.5 gap-2 border border-outline-variant/40">
       <span class="material-symbols-outlined text-secondary" style="font-size:20px">search</span>
-      <input type="text" placeholder="Search dishes…"
+      <input id="menu-search-mobile" type="text" placeholder="Search dishes…"
         class="bg-transparent border-none outline-none text-sm w-full font-medium placeholder:text-secondary"
-        oninput="filterItems(this.value)"/>
+        oninput="filterItems()"/>
     </div>
   </div>
 </header>
@@ -153,58 +152,209 @@ if (!isset($_SESSION['user_id'])) {
 <script src="js/cart.js"></script>
 <script>
 /* ===================================================
-   Data
+   Categories
 =================================================== */
 const CATEGORIES = [
-  { id:'all',      label:'All',       emoji:'🍽️' },
-  { id:'biryani',  label:'Biryani',   emoji:'🍛' },
-  { id:'pizza',    label:'Pizza',     emoji:'🍕' },
-  { id:'burger',   label:'Burger',    emoji:'🍔' },
-  { id:'sushi',    label:'Sushi',     emoji:'🍣' },
-  { id:'pasta',    label:'Pasta',     emoji:'🍝' },
-  { id:'dessert',  label:'Desserts',  emoji:'🍰' },
-  { id:'drinks',   label:'Drinks',    emoji:'🥤' },
-  { id:'healthy',  label:'Healthy',   emoji:'🥗' },
+  { id:'all',          label:'All',            emoji:'🍽️' },
+  { id:'bread',        label:'Breads',         emoji:'🍞' },
+  { id:'rice',         label:'Rice Dishes',    emoji:'🍚' },
+  { id:'eggs',         label:'Eggs',           emoji:'🥚' },
+  { id:'indian',       label:'Indian',         emoji:'🍛' },
+  { id:'international',label:'International',  emoji:'🌍' },
 ];
 
+/* ===================================================
+   Food Data — 21 items from reference image
+   Each with a unique, verified Wikipedia image
+=================================================== */
 const FOODS = [
-  // Biryani
-  { id:'b1', name:'Hyderabadi Dum Biryani', restaurant:'Biryani House', cat:'biryani', price:220, rating:4.8, ratingCount:2.3, veg:false, time:'30-40', img:'https://upload.wikimedia.org/wikipedia/commons/7/75/Hyderabadi_Chicken_biriyani.jpg', badge:'Bestseller' },
-  { id:'b2', name:'Veg Dum Biryani', restaurant:'Spice Garden', cat:'biryani', price:180, rating:4.6, ratingCount:1.2, veg:true, time:'25-35', img:'https://upload.wikimedia.org/wikipedia/commons/3/31/Vegetable_Biryani.jpg', badge:'' },
-  { id:'b3', name:'Chicken Biryani Bowl', restaurant:'Royal Kitchen', cat:'biryani', price:199, rating:4.7, ratingCount:890, veg:false, time:'35-45', img:'https://upload.wikimedia.org/wikipedia/commons/e/e0/Hyderabadi_Chicken_Biryani.jpg', badge:'20% Off' },
-  // Pizza
-  { id:'p1', name:'Margherita Classic', restaurant:'Pizza Primo', cat:'pizza', price:249, rating:4.5, ratingCount:3.1, veg:true, time:'20-30', img:'https://upload.wikimedia.org/wikipedia/commons/c/c8/Pizza_Margherita_stu_spivack.jpg', badge:'' },
-  { id:'p2', name:'BBQ Chicken Pizza', restaurant:"Mama's Pizzeria", cat:'pizza', price:349, rating:4.8, ratingCount:4.2, veg:false, time:'25-35', img:'https://upload.wikimedia.org/wikipedia/commons/a/a3/Eq_it-na_pizza-margherita_sep2005_sml.jpg', badge:"Chef's Pick" },
-  { id:'p3', name:'Paneer Tikka Pizza', restaurant:'Pizza Primo', cat:'pizza', price:299, rating:4.6, ratingCount:1.8, veg:true, time:'20-30', img:'https://upload.wikimedia.org/wikipedia/commons/6/6d/Good_Food_Display_-_NCI_Visuals_Online.jpg', badge:'Veg Special' },
-  // Burger
-  { id:'bu1', name:'Classic Smash Burger', restaurant:'Urban Bites', cat:'burger', price:179, rating:4.7, ratingCount:5.2, veg:false, time:'15-25', img:'https://upload.wikimedia.org/wikipedia/commons/c/c7/Smashburger-1.jpg', badge:'Bestseller' },
-  { id:'bu2', name:'Veggie Delight Burger', restaurant:'Green Plates', cat:'burger', price:149, rating:4.4, ratingCount:1.1, veg:true, time:'15-20', img:'https://upload.wikimedia.org/wikipedia/commons/f/fb/Burger_King_Veggie_Burger.jpg', badge:'' },
-  { id:'bu3', name:'Double Patty Whopper', restaurant:'Urban Bites', cat:'burger', price:229, rating:4.9, ratingCount:6.8, veg:false, time:'20-30', img:'https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png', badge:'🔥 Trending' },
-  // Sushi
-  { id:'s1', name:'Salmon Nigiri Set', restaurant:'Ocean Harvest', cat:'sushi', price:499, rating:4.9, ratingCount:2.4, veg:false, time:'25-35', img:'https://upload.wikimedia.org/wikipedia/commons/0/07/Salmon_Nigiri.jpg', badge:'Premium' },
-  { id:'s2', name:'Veg Maki Roll', restaurant:'Sushi World', cat:'sushi', price:299, rating:4.5, ratingCount:980, veg:true, time:'20-30', img:'https://upload.wikimedia.org/wikipedia/commons/6/60/Makizushi_cut.jpg', badge:'' },
-  // Pasta
-  { id:'pa1', name:'Pasta Arrabiata', restaurant:'Pasta Fresca', cat:'pasta', price:199, rating:4.6, ratingCount:2.1, veg:true, time:'20-30', img:'https://upload.wikimedia.org/wikipedia/commons/e/e5/Penne_arrabbiata.jpg', badge:'' },
-  { id:'pa2', name:'Chicken Alfredo', restaurant:'Pasta Fresca', cat:'pasta', price:259, rating:4.7, ratingCount:1.7, veg:false, time:'25-35', img:'https://upload.wikimedia.org/wikipedia/commons/9/9d/Fettucine_Alfredo.jpg', badge:'Fan Favourite' },
-  // Desserts
-  { id:'d1', name:'Gulab Jamun (8pcs)', restaurant:'Sweet Cravings', cat:'dessert', price:99, rating:4.8, ratingCount:3.6, veg:true, time:'15-20', img:'https://upload.wikimedia.org/wikipedia/commons/e/e0/Gulab_jamun_1.jpg', badge:'Must Try' },
-  { id:'d2', name:'Chocolate Lava Cake', restaurant:'Cafe Delight', cat:'dessert', price:149, rating:4.9, ratingCount:4.1, veg:true, time:'20-25', img:'https://upload.wikimedia.org/wikipedia/commons/d/d6/Molten_Chocolate_Cake.jpg', badge:'🔥 Popular' },
-  { id:'d3', name:'Mango Kulfi', restaurant:'Sweet Cravings', cat:'dessert', price:79, rating:4.7, ratingCount:2.0, veg:true, time:'10-15', img:'https://upload.wikimedia.org/wikipedia/commons/d/d1/Mango_Kulfi.jpg', badge:'' },
-  // Drinks
-  { id:'dr1', name:'Mango Lassi', restaurant:'Fresh Sip', cat:'drinks', price:89, rating:4.6, ratingCount:1.5, veg:true, time:'10-15', img:'https://upload.wikimedia.org/wikipedia/commons/4/47/Tasty_Mango_lassi_picture.JPG', badge:'Fresh' },
-  { id:'dr2', name:'Cold Coffee Shake', restaurant:'Cafe Delight', cat:'drinks', price:119, rating:4.7, ratingCount:2.2, veg:true, time:'10-15', img:'https://upload.wikimedia.org/wikipedia/commons/4/45/A_small_cup_of_coffee.JPG', badge:'' },
-  // Healthy
-  { id:'h1', name:'Quinoa Buddha Bowl', restaurant:'Green Plates', cat:'healthy', price:229, rating:4.5, ratingCount:780, veg:true, time:'20-30', img:'https://upload.wikimedia.org/wikipedia/commons/2/20/Chickpea_salad.jpg', badge:'Healthy' },
-  { id:'h2', name:'Grilled Chicken Salad', restaurant:'FitBites', cat:'healthy', price:269, rating:4.6, ratingCount:1.3, veg:false, time:'15-25', img:'https://upload.wikimedia.org/wikipedia/commons/6/60/Grilled_chicken_salad.jpg', badge:'Low Cal' },
+
+  /* ── BREADS ──────────────────────────────────────── */
+  {
+    id:'f01', name:'Bread',
+    restaurant:"Baker's Basket",
+    cat:'bread', price:49, rating:4.2, ratingCount:3.1,
+    veg:true, time:'5-10',
+    image:'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&q=80',
+    badge:''
+  },
+  {
+    id:'f02', name:'Roti',
+    restaurant:'Dhaba Junction',
+    cat:'bread', price:15, rating:4.5, ratingCount:8.3,
+    veg:true, time:'5-10',
+    image:'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&q=80',
+    badge:'Daily Staple'
+  },
+  {
+    id:'f03', name:'Paratha',
+    restaurant:'Dhaba Junction',
+    cat:'bread', price:45, rating:4.7, ratingCount:6.2,
+    veg:true, time:'10-15',
+    image:'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80',
+    badge:'Morning Special'
+  },
+
+  /* ── RICE DISHES ─────────────────────────────────── */
+  {
+    id:'f04', name:'Rice',
+    restaurant:'Spice Garden',
+    cat:'rice', price:59, rating:4.1, ratingCount:4.8,
+    veg:true, time:'15-20',
+    image:'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=400&q=80',
+    badge:''
+  },
+  {
+    id:'f05', name:'Pulao',
+    restaurant:'Spice Garden',
+    cat:'rice', price:119, rating:4.5, ratingCount:3.4,
+    veg:true, time:'20-25',
+    image:'https://images.unsplash.com/photo-1630851840633-f96999247032?w=400&q=80',
+    badge:'Veg Special'
+  },
+  {
+    id:'f06', name:'Biryani',
+    restaurant:'Biryani House',
+    cat:'rice', price:249, rating:4.8, ratingCount:9.2,
+    veg:false, time:'30-40',
+    image:'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400&q=80',
+    badge:'Bestseller'
+  },
+  {
+    id:'f07', name:'Fried Rice',
+    restaurant:'Wok & Roll',
+    cat:'rice', price:149, rating:4.5, ratingCount:4.7,
+    veg:true, time:'15-20',
+    image:'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400&q=80',
+    badge:'Indo-Chinese'
+  },
+
+  /* ── EGGS ────────────────────────────────────────── */
+  {
+    id:'f08', name:'Boiled Egg',
+    restaurant:'Egg Station',
+    cat:'eggs', price:29, rating:4.2, ratingCount:2.8,
+    veg:false, time:'10-15',
+    image:'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&q=80',
+    badge:'Protein Rich'
+  },
+  {
+    id:'f09', name:'Omelette',
+    restaurant:'Egg Station',
+    cat:'eggs', price:59, rating:4.5, ratingCount:3.6,
+    veg:false, time:'10-15',
+    image:'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&q=80',
+    badge:'Fresh Made'
+  },
+  {
+    id:'f10', name:'Scrambled Eggs',
+    restaurant:'Egg Station',
+    cat:'eggs', price:69, rating:4.4, ratingCount:2.2,
+    veg:false, time:'10-15',
+    image:'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=400&q=80',
+    badge:'Breakfast'
+  },
+
+  /* ── INDIAN ──────────────────────────────────────── */
+  {
+    id:'f11', name:'Idli',
+    restaurant:'Saravana Bhavan',
+    cat:'indian', price:69, rating:4.6, ratingCount:5.3,
+    veg:true, time:'15-20',
+    image:'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=400&q=80',
+    badge:'South Indian'
+  },
+  {
+    id:'f12', name:'Dosa',
+    restaurant:'Saravana Bhavan',
+    cat:'indian', price:89, rating:4.7, ratingCount:7.1,
+    veg:true, time:'15-20',
+    image:'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=400&q=80',
+    badge:'Crispy'
+  },
+  {
+    id:'f13', name:'Paneer Curry',
+    restaurant:'Shahi Rasoi',
+    cat:'indian', price:199, rating:4.6, ratingCount:4.4,
+    veg:true, time:'20-30',
+    image:'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=400&q=80',
+    badge:'Veg Favourite'
+  },
+  {
+    id:'f14', name:'Chicken Curry',
+    restaurant:'Punjab Grill',
+    cat:'indian', price:249, rating:4.8, ratingCount:7.9,
+    veg:false, time:'25-35',
+    image:'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400&q=80',
+    badge:'Must Try'
+  },
+  {
+    id:'f15', name:'Mutton Korma',
+    restaurant:"Nawab's Kitchen",
+    cat:'indian', price:329, rating:4.8, ratingCount:3.6,
+    veg:false, time:'35-45',
+    image:'https://images.unsplash.com/photo-1574653853027-5382a3d23a15?w=400&q=80',
+    badge:'Rich & Creamy'
+  },
+
+  /* ── INTERNATIONAL ───────────────────────────────── */
+  {
+    id:'f16', name:'Noodles',
+    restaurant:'Wok & Roll',
+    cat:'international', price:129, rating:4.4, ratingCount:5.8,
+    veg:true, time:'15-20',
+    image:'https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=400&q=80',
+    badge:'Indo-Chinese'
+  },
+  {
+    id:'f17', name:'Pasta',
+    restaurant:'Pasta Fresca',
+    cat:'international', price:189, rating:4.6, ratingCount:4.2,
+    veg:true, time:'20-25',
+    image:'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&q=80',
+    badge:''
+  },
+  {
+    id:'f18', name:'Pizza',
+    restaurant:'Pizza Primo',
+    cat:'international', price:249, rating:4.7, ratingCount:6.3,
+    veg:true, time:'20-30',
+    image:'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80',
+    badge:'Cheesy'
+  },
+  {
+    id:'f19', name:'Mashed Potatoes',
+    restaurant:'Green Plates',
+    cat:'international', price:89, rating:4.3, ratingCount:1.9,
+    veg:true, time:'15-20',
+    image:'https://images.unsplash.com/photo-1632778149955-e80f8ceca2e8?w=400&q=80',
+    badge:'Comfort Food'
+  },
+  {
+    id:'f20', name:'Grilled Chicken',
+    restaurant:'Frontier Grill',
+    cat:'international', price:279, rating:4.7, ratingCount:5.5,
+    veg:false, time:'25-35',
+    image:'https://images.unsplash.com/photo-1598103442097-8b74394b95c3?w=400&q=80',
+    badge:'Grilled Fresh'
+  },
+  {
+    id:'f21', name:'Roasted Vegetables',
+    restaurant:'Green Plates',
+    cat:'international', price:149, rating:4.4, ratingCount:2.1,
+    veg:true, time:'20-25',
+    image:'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80',
+    badge:'Healthy'
+  },
 ];
 
 /* ===================================================
    State
 =================================================== */
 let activeCategory = 'all';
-let activeDiet = 'all';
-let activeSort = 'popular';
-let searchQuery = '';
+let activeDiet     = 'all';
+let activeSort     = 'popular';
+let searchQuery    = '';
 
 /* ===================================================
    Init
@@ -214,6 +364,16 @@ document.addEventListener('DOMContentLoaded', () => {
   renderFoods();
   loadLocation();
   updateFloatingCart();
+  updateCartBadge();
+
+  // Sync mobile search with desktop
+  const mobile = document.getElementById('menu-search-mobile');
+  if (mobile) mobile.addEventListener('input', () => {
+    searchQuery = mobile.value;
+    const desk = document.getElementById('menu-search');
+    if (desk) desk.value = mobile.value;
+    renderFoods();
+  });
 });
 
 window.addEventListener('zyrop:cart-updated', () => {
@@ -241,7 +401,7 @@ function setCategory(id) {
     btn.className = 'flex-shrink-0 flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold border transition-all duration-200 border-outline-variant text-secondary hover:bg-surface-container';
   });
   const active = document.getElementById(`cat-${id}`);
-  active.className = 'flex-shrink-0 flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold border transition-all duration-200 bg-primary text-on-primary border-primary';
+  if (active) active.className = 'flex-shrink-0 flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold border transition-all duration-200 bg-primary text-on-primary border-primary';
   renderFoods();
 }
 
@@ -253,7 +413,8 @@ function setDietFilter(diet) {
   document.querySelectorAll('.diet-btn').forEach(b => {
     b.className = 'diet-btn px-3 py-1 rounded-full text-xs font-bold border border-outline-variant transition-all hover:bg-surface-container';
   });
-  document.getElementById(`diet-${diet}`).className = 'diet-btn active px-3 py-1 rounded-full text-xs font-bold border border-outline-variant transition-all bg-primary text-on-primary';
+  const el = document.getElementById(`diet-${diet}`);
+  if (el) el.className = 'diet-btn active px-3 py-1 rounded-full text-xs font-bold border border-outline-variant transition-all bg-primary text-on-primary';
   renderFoods();
 }
 
@@ -263,15 +424,20 @@ function setSortOrder(val) {
 }
 
 function filterItems() {
-  searchQuery = document.getElementById('menu-search')?.value || '';
+  const desk   = document.getElementById('menu-search');
+  const mobile = document.getElementById('menu-search-mobile');
+  searchQuery  = (desk && document.activeElement === desk) ? desk.value : (mobile ? mobile.value : '');
   renderFoods();
 }
 
 function resetFilters() {
   activeCategory = 'all';
-  activeDiet = 'all';
-  searchQuery = '';
-  if (document.getElementById('menu-search')) document.getElementById('menu-search').value = '';
+  activeDiet     = 'all';
+  searchQuery    = '';
+  const desk   = document.getElementById('menu-search');
+  const mobile = document.getElementById('menu-search-mobile');
+  if (desk)   desk.value   = '';
+  if (mobile) mobile.value = '';
   buildCategoryBar();
   setDietFilter('all');
   renderFoods();
@@ -287,16 +453,20 @@ function renderFoods() {
   if (activeDiet === 'veg')     items = items.filter(f => f.veg);
   if (activeDiet === 'nonveg')  items = items.filter(f => !f.veg);
 
-  if (searchQuery.trim()) {
-    const q = searchQuery.toLowerCase();
-    items = items.filter(f => f.name.toLowerCase().includes(q) || f.restaurant.toLowerCase().includes(q));
+  const q = searchQuery.trim().toLowerCase();
+  if (q) {
+    items = items.filter(f =>
+      f.name.toLowerCase().includes(q) ||
+      f.restaurant.toLowerCase().includes(q)
+    );
   }
 
   if (activeSort === 'price-asc')  items.sort((a,b) => a.price - b.price);
   if (activeSort === 'price-desc') items.sort((a,b) => b.price - a.price);
   if (activeSort === 'rating')     items.sort((a,b) => b.rating - a.rating);
 
-  document.getElementById('results-count').textContent = `${items.length} item${items.length!==1?'s':''} found`;
+  const count = document.getElementById('results-count');
+  if (count) count.textContent = `${items.length} item${items.length !== 1 ? 's' : ''} found`;
 
   const grid  = document.getElementById('food-grid');
   const empty = document.getElementById('empty-state');
@@ -318,15 +488,21 @@ function renderFoods() {
 =================================================== */
 function foodCard(f, i) {
   const qty = ZyropCart.getItemQty(f.id);
-  const ratingStr = typeof f.ratingCount === 'number' && f.ratingCount >= 1
-    ? `${f.ratingCount}k ratings` : `${f.ratingCount} ratings`;
+  const rc  = f.ratingCount;
+  const ratingStr = (typeof rc === 'number' && rc >= 1) ? `${rc}k ratings` : `${rc} ratings`;
+  const vegClass  = f.veg
+    ? 'border-green-600 text-green-600 bg-white'
+    : 'border-red-600 text-red-600 bg-white';
+
+  // Fallback image only if item.image is missing, and clear browser cache issue by adding ?v=2
+  const imageUrl = f.image ? `${f.image}${f.image.includes('?') ? '&' : '?'}v=2` : 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80';
+
   return `
-  <div class="food-card animate-fade-in-up" style="animation-delay:${i*0.05}s">
+  <div class="food-card animate-fade-in-up" style="animation-delay:${i * 0.05}s">
     <div class="relative overflow-hidden" style="height:180px">
-      <img src="${f.img}" alt="${f.name}" class="w-full h-full object-cover" loading="lazy"
-           onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80'"/>
+      <img src="${imageUrl}" alt="${f.name}" class="w-full h-full object-cover" loading="lazy"/>
       ${f.badge ? `<span class="absolute top-3 left-3 bg-on-background/85 text-white text-[11px] font-bold px-2.5 py-1 rounded-full">${f.badge}</span>` : ''}
-      <span class="absolute top-3 right-3 w-5 h-5 rounded border-2 flex items-center justify-center text-[10px] font-bold ${f.veg ? 'border-green-600 text-green-600 bg-white' : 'border-red-600 text-red-600 bg-white'}">●</span>
+      <span class="absolute top-3 right-3 w-5 h-5 rounded border-2 flex items-center justify-center text-[10px] font-bold ${vegClass}">●</span>
     </div>
     <div class="p-4 flex flex-col gap-2">
       <div>
@@ -346,7 +522,7 @@ function foodCard(f, i) {
         </span>
       </div>
       <div class="flex items-center justify-between mt-1">
-        <span class="font-extrabold text-base text-on-surface">₹${f.price}</span>
+        <span class="font-extrabold text-base text-on-surface">&#8377;${f.price}</span>
         ${qty === 0
           ? `<button onclick="addToCart('${f.id}')" id="add-btn-${f.id}"
                class="flex items-center gap-1.5 bg-primary text-on-primary rounded-full px-4 py-1.5 text-xs font-bold hover:bg-primary-container active:scale-95 transition-all">
@@ -369,7 +545,7 @@ function foodCard(f, i) {
 function addToCart(id) {
   const food = FOODS.find(f => f.id === id);
   if (!food) return;
-  const qty = ZyropCart.addItem({ id:food.id, name:food.name, price:food.price, image:food.img, restaurant:food.restaurant, veg:food.veg });
+  const qty = ZyropCart.addItem({ id:food.id, name:food.name, price:food.price, image:food.image, restaurant:food.restaurant, veg:food.veg });
   showToast(`${food.name} added to cart! 🛒`, 'success', 2000);
   updateFoodCardBtn(id, qty);
   updateFloatingCart();
@@ -377,7 +553,7 @@ function addToCart(id) {
 
 function changeQty(id, delta) {
   if (delta > 0) ZyropCart.incrementItem(id);
-  else ZyropCart.decrementItem(id);
+  else           ZyropCart.decrementItem(id);
   const qty = ZyropCart.getItemQty(id);
   updateFoodCardBtn(id, qty);
   updateFloatingCart();
@@ -413,14 +589,30 @@ function updateFoodCardBtn(id, qty) {
 function updateFloatingCart() {
   const count    = ZyropCart.getTotalCount();
   const subtotal = ZyropCart.getSubtotal();
-  const fc = document.getElementById('floating-cart');
+  const fc       = document.getElementById('floating-cart');
   if (count > 0) {
     fc.classList.remove('hidden');
-    document.getElementById('float-cart-info').textContent  = `${count} item${count>1?'s':''}`;
-    document.getElementById('float-cart-price').textContent = `₹${subtotal}`;
+    document.getElementById('float-cart-info').textContent  = `${count} item${count > 1 ? 's' : ''}`;
+    document.getElementById('float-cart-price').textContent = `\u20B9${subtotal}`;
   } else {
     fc.classList.add('hidden');
   }
+}
+
+/* ===================================================
+   Cart Badge
+=================================================== */
+function updateCartBadge() {
+  const count   = ZyropCart.getTotalCount();
+  const badges  = document.querySelectorAll('.cart-count-badge');
+  badges.forEach(b => {
+    if (count > 0) {
+      b.style.display = 'flex';
+      b.textContent   = count;
+    } else {
+      b.style.display = 'none';
+    }
+  });
 }
 
 /* ===================================================
@@ -430,14 +622,14 @@ function loadLocation() {
   const loc  = ZyropLocation.get();
   const wrap = document.getElementById('header-location');
   const text = document.getElementById('header-loc-text');
-  wrap.classList.remove('hidden');
+  if (wrap) wrap.classList.remove('hidden');
   if (loc) {
-    text.textContent = loc.label.split(',')[0];
+    if (text) text.textContent = loc.label.split(',')[0];
   } else {
-    text.textContent = 'Set location';
+    if (text) text.textContent = 'Set location';
     ZyropLocation.detect(
-      (l) => { text.textContent = l.label.split(',')[0]; },
-      ()  => { text.textContent = 'Set location'; }
+      (l) => { if (text) text.textContent = l.label.split(',')[0]; },
+      ()  => { if (text) text.textContent = 'Set location'; }
     );
   }
 }

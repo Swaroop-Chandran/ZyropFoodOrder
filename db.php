@@ -27,4 +27,8 @@ try {
      // Otherwise show user-friendly error
      die("Connection failed: " . $e->getMessage());
 }
+
+// Google Sign-In Client Configuration
+// Replace with your real Google Client ID from Google Cloud Console (https://console.cloud.google.com/)
+define('GOOGLE_CLIENT_ID', 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com');
 ?>
