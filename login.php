@@ -1,9 +1,10 @@
 <?php
 session_start();
 require_once 'db.php';
-// If user is already logged in, redirect to home page
+// If user is already logged in, redirect to index or the requested redirect URL
 if (isset($_SESSION['user_id'])) {
-    header("Location: index.php");
+    $redirect = isset($_GET['redirect']) ? $_GET['redirect'] : 'index.php';
+    header("Location: " . $redirect);
     exit();
 }
 ?>
@@ -398,7 +399,9 @@ if (isset($_SESSION['user_id'])) {
           loggedIn: true
         }));
         showToast(data.message, 'success');
-        setTimeout(() => { window.location.href = 'index.php'; }, 800);
+        const params = new URLSearchParams(window.location.search);
+        const redirectUrl = params.get('redirect') || 'index.php';
+        setTimeout(() => { window.location.href = redirectUrl; }, 800);
       } else {
         showToast(data.message, 'error');
         btn.innerHTML = origHTML;
@@ -432,7 +435,9 @@ if (isset($_SESSION['user_id'])) {
           loggedIn: true
         }));
         showToast(data.message, 'success');
-        setTimeout(() => { window.location.href = 'index.php'; }, 800);
+        const params = new URLSearchParams(window.location.search);
+        const redirectUrl = params.get('redirect') || 'index.php';
+        setTimeout(() => { window.location.href = redirectUrl; }, 800);
       } else {
         showToast(data.message, 'error');
       }
@@ -483,7 +488,9 @@ if (isset($_SESSION['user_id'])) {
           loggedIn: true
         }));
         showToast(data.message, 'success');
-        setTimeout(() => { window.location.href = 'index.php'; }, 900);
+        const params = new URLSearchParams(window.location.search);
+        const redirectUrl = params.get('redirect') || 'index.php';
+        setTimeout(() => { window.location.href = redirectUrl; }, 900);
       } else {
         showToast(data.message, 'error');
         btn.innerHTML = origHTML;

@@ -1,8 +1,8 @@
 <?php
 session_start();
-// Redirect to login if user is not authenticated
+// Redirect to login if user is not authenticated, preserving redirect location
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: login.php?redirect=" . urlencode("checkout.php"));
     exit();
 }
 ?>
@@ -69,6 +69,7 @@ if (!isset($_SESSION['user_id'])) {
     <div class="flex items-center gap-2 border border-outline-variant/30 rounded-full px-3 py-1 bg-surface-container-low">
       <span class="material-symbols-outlined text-primary" style="font-size:18px">account_circle</span>
       <span class="text-xs font-bold text-on-surface truncate max-w-[100px]"><?php echo htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]); ?></span>
+      <a href="orders.php" class="text-xs font-bold text-secondary hover:text-primary transition-colors ml-1" title="My Orders">Orders</a>
       <a href="logout.php" class="material-symbols-outlined text-secondary hover:text-error transition-colors" style="font-size:16px" title="Logout">logout</a>
     </div>
   </div>

@@ -1,9 +1,5 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit();
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -58,7 +54,7 @@ if (!isset($_SESSION['user_id'])) {
     <div class="flex items-center gap-3">
 
       <!-- Location pill -->
-      <div id="header-location" class="hidden lg:flex items-center gap-1.5 bg-surface-container rounded-full px-3 py-1.5 cursor-pointer hover:bg-surface-container-high transition-colors">
+      <div id="header-location" onclick="changeHeaderLocation()" class="hidden lg:flex items-center gap-1.5 bg-surface-container rounded-full px-3 py-1.5 cursor-pointer hover:bg-surface-container-high transition-colors">
         <span class="material-symbols-outlined text-primary" style="font-size:16px">location_on</span>
         <span id="header-loc-text" class="text-xs font-semibold text-on-surface max-w-[120px] truncate">Detecting…</span>
         <span class="material-symbols-outlined text-secondary" style="font-size:14px">keyboard_arrow_down</span>
@@ -72,11 +68,19 @@ if (!isset($_SESSION['user_id'])) {
       </a>
 
       <!-- Account Info Header Menu -->
+      <?php if (isset($_SESSION['user_id'])): ?>
       <div class="flex items-center gap-2 border border-outline-variant/30 rounded-full px-3 py-1 bg-surface-container-low">
         <span class="material-symbols-outlined text-primary" style="font-size:18px">account_circle</span>
         <span class="text-xs font-bold text-on-surface truncate max-w-[100px]"><?php echo htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]); ?></span>
+        <a href="orders.php" class="text-xs font-bold text-secondary hover:text-primary transition-colors ml-1" title="My Orders">Orders</a>
         <a href="logout.php" class="material-symbols-outlined text-secondary hover:text-error transition-colors" style="font-size:16px" title="Logout">logout</a>
       </div>
+      <?php else: ?>
+      <a href="login.php" class="flex items-center gap-1.5 border border-outline-variant/30 rounded-full px-4 py-2 bg-surface-container-low text-xs font-bold text-on-surface hover:bg-surface-container-high transition-colors">
+        <span class="material-symbols-outlined text-primary" style="font-size:18px">login</span>
+        Login / Register
+      </a>
+      <?php endif; ?>
     </div>
   </div>
 
@@ -349,8 +353,10 @@ const FOODS = [
 ];
 
 /* ===================================================
-   State
+   State & Auth Configuration
 =================================================== */
+const IS_LOGGED_IN = <?php echo isset($_SESSION['user_id']) ? 'true' : 'false'; ?>;
+
 let activeCategory = 'all';
 let activeDiet     = 'all';
 let activeSort     = 'popular';
@@ -374,6 +380,24 @@ document.addEventListener('DOMContentLoaded', () => {
     if (desk) desk.value = mobile.value;
     renderFoods();
   });
+
+  // Recovery of pending actions
+  if (IS_LOGGED_IN) {
+    const pending = localStorage.getItem('zyrop_pending_action');
+    if (pending) {
+      try {
+        const action = JSON.parse(pending);
+        localStorage.removeItem('zyrop_pending_action');
+        if (action && action.type === 'add_to_cart') {
+          addToCart(action.id);
+        } else if (action && action.type === 'change_qty') {
+          changeQty(action.id, action.delta);
+        }
+      } catch (e) {
+        localStorage.removeItem('zyrop_pending_action');
+      }
+    }
+  }
 });
 
 window.addEventListener('zyrop:cart-updated', () => {
@@ -543,6 +567,14 @@ function foodCard(f, i) {
    Cart Actions
 =================================================== */
 function addToCart(id) {
+  if (!IS_LOGGED_IN) {
+    localStorage.setItem('zyrop_pending_action', JSON.stringify({ type: 'add_to_cart', id: id }));
+    showToast('Redirecting to login... 🔑', 'info', 1000);
+    setTimeout(() => {
+      window.location.href = 'login.php?redirect=' + encodeURIComponent(window.location.href);
+    }, 800);
+    return;
+  }
   const food = FOODS.find(f => f.id === id);
   if (!food) return;
   const qty = ZyropCart.addItem({ id:food.id, name:food.name, price:food.price, image:food.image, restaurant:food.restaurant, veg:food.veg });
@@ -552,6 +584,14 @@ function addToCart(id) {
 }
 
 function changeQty(id, delta) {
+  if (!IS_LOGGED_IN) {
+    localStorage.setItem('zyrop_pending_action', JSON.stringify({ type: 'change_qty', id: id, delta: delta }));
+    showToast('Please login to update your cart. 🔑', 'info', 1000);
+    setTimeout(() => {
+      window.location.href = 'login.php?redirect=' + encodeURIComponent(window.location.href);
+    }, 800);
+    return;
+  }
   if (delta > 0) ZyropCart.incrementItem(id);
   else           ZyropCart.decrementItem(id);
   const qty = ZyropCart.getItemQty(id);
@@ -632,6 +672,25 @@ function loadLocation() {
       ()  => { if (text) text.textContent = 'Set location'; }
     );
   }
+}
+
+function changeHeaderLocation() {
+  if (!IS_LOGGED_IN) {
+    showToast('Please login to save location for orders. 🔑', 'info', 1000);
+    setTimeout(() => {
+      window.location.href = 'login.php?redirect=' + encodeURIComponent(window.location.href);
+    }, 800);
+    return;
+  }
+  showToast('Detecting location... 📍', 'info');
+  ZyropLocation.detect(
+    (loc) => {
+      ZyropLocation.save(loc);
+      loadLocation();
+      showToast('Location updated! 📍', 'success');
+    },
+    (err) => showToast(err, 'error')
+  );
 }
 </script>
 </body>

@@ -1,8 +1,9 @@
 <?php
 session_start();
-// Gated behind active session check
+// Gated behind active session check, preserving redirect location with Order ID
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    $orderId = $_GET['id'] ?? '';
+    header("Location: login.php?redirect=" . urlencode("order-confirmation.php?id=" . $orderId));
     exit();
 }
 
