@@ -1,14 +1,8 @@
 <?php
-// place_order_api.php — AJAX Place Order Handler
+// place_order_api.php — AJAX Place Order Handler (Supports Guest Checkout)
 
 session_start();
 header('Content-Type: application/json');
-
-// Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'message' => 'Unauthorized. Please login again.']);
-    exit();
-}
 
 require_once 'db.php';
 
@@ -33,7 +27,43 @@ $gst         = floatval($meta['gst'] ?? 0);
 $discount    = floatval($meta['appliedDiscount'] ?? 0);
 $total       = floatval($meta['total'] ?? 0);
 
-$userId = $_SESSION['user_id'];
+// Determine User ID (Support logged-in or dynamic guest user creation)
+if (isset($_SESSION['user_id'])) {
+    $userId = $_SESSION['user_id'];
+} else {
+    // Guest Checkout flow
+    $email = trim($data['email'] ?? '');
+    $phone = trim($data['phone'] ?? '');
+    
+    if (!$email || !$phone) {
+        echo json_encode(['success' => false, 'message' => 'Email and Phone Number are required for guest checkout.']);
+        exit();
+    }
+    
+    try {
+        // Check if a user with this email already exists
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        $existingUser = $stmt->fetch();
+        
+        if ($existingUser) {
+            $userId = $existingUser['id'];
+        } else {
+            // Auto-create a guest user account
+            $usernameParts = explode('@', $email);
+            $name = trim(strtoupper($usernameParts[0])) . ' (Guest)';
+            $randomPassword = bin2hex(random_bytes(16));
+            $hashedPassword = password_hash($randomPassword, PASSWORD_DEFAULT);
+            
+            $insertUser = $pdo->prepare("INSERT INTO users (name, email, phone, password, address) VALUES (?, ?, ?, ?, ?)");
+            $insertUser->execute([$name, $email, $phone, $hashedPassword, $address]);
+            $userId = $pdo->lastInsertId();
+        }
+    } catch (\Exception $e) {
+        echo json_encode(['success' => false, 'message' => 'Failed to process guest user: ' . $e->getMessage()]);
+        exit();
+    }
+}
 
 // Generate unique Order ID, e.g., ZYR6839201
 $orderId = 'ZYR' . mt_rand(1000000, 9999999);
@@ -89,7 +119,7 @@ try {
 
     echo json_encode([
         'success' => true,
-        'message' => 'Order placed successfully! 🚀',
+        'message' => 'Order placed successfully!',
         'order_id' => $orderId
     ]);
 

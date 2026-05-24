@@ -115,7 +115,7 @@ $pageDesc = $pageDesc ?? 'Order your favorite meals from top local restaurants n
 
       <?php if ($isLoggedIn): ?>
         <!-- Logged In state glass dropdown menu -->
-        <div class="flex items-center gap-3 bg-black/5 border border-black/5 rounded-full pl-3 pr-3 py-1.5">
+        <div class="flex items-center gap-3 bg-black/5 border border-black/5 rounded-full pl-3 pr-3 py-1.5 animate-fade-in">
           <span class="material-symbols-outlined text-primary" style="font-size:20px">account_circle</span>
           <span class="text-xs font-bold text-zinc-800 hidden sm:inline-block max-w-[100px] truncate">
             Hey, <?php echo htmlspecialchars($firstName); ?>
@@ -125,9 +125,9 @@ $pageDesc = $pageDesc ?? 'Order your favorite meals from top local restaurants n
           </a>
         </div>
       <?php else: ?>
-        <!-- Guest State -->
-        <a href="login.php" class="bg-primary text-white hover:bg-primary-container border border-primary/20 px-5 py-2 rounded-xl text-xs font-bold transition-all duration-200 transform hover:scale-105 active:scale-95 flex items-center gap-1.5 shadow-sm hover:shadow-primary/25">
-          <span class="material-symbols-outlined" style="font-size:16px">login</span> Login
+        <!-- Guest State (Subtle) -->
+        <a href="login.php" class="text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-primary transition-colors py-2 px-3">
+          Sign In
         </a>
       <?php endif; ?>
     </div>

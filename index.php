@@ -600,14 +600,6 @@ function foodCard(f, i) {
    Cart Actions
 =================================================== */
 function addToCart(id) {
-  if (!IS_LOGGED_IN) {
-    localStorage.setItem('zyrop_pending_action', JSON.stringify({ type: 'add_to_cart', id: id }));
-    showToast('Redirecting to login...', 'info', 1000);
-    setTimeout(() => {
-      window.location.href = 'login.php?redirect=' + encodeURIComponent(window.location.href);
-    }, 800);
-    return;
-  }
   const food = FOODS.find(f => f.id === id);
   if (!food) return;
   const qty = ZyropCart.addItem({ id:food.id, name:food.name, price:food.price, image:food.image, restaurant:food.restaurant, veg:food.veg });
@@ -617,14 +609,6 @@ function addToCart(id) {
 }
 
 function changeQty(id, delta) {
-  if (!IS_LOGGED_IN) {
-    localStorage.setItem('zyrop_pending_action', JSON.stringify({ type: 'change_qty', id: id, delta: delta }));
-    showToast('Please log in to update your cart.', 'info', 1000);
-    setTimeout(() => {
-      window.location.href = 'login.php?redirect=' + encodeURIComponent(window.location.href);
-    }, 800);
-    return;
-  }
   if (delta > 0) ZyropCart.incrementItem(id);
   else           ZyropCart.decrementItem(id);
   const qty = ZyropCart.getItemQty(id);

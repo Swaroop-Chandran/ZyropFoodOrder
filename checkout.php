@@ -1,13 +1,13 @@
 <?php
-$pageTitle = 'Checkout — Zesto';
-$pageDesc = 'Complete your payment and place your food order securely.';
+$pageTitle = 'Confirm Your Order — Zesto';
+$pageDesc = 'Confirm your items and complete your guest checkout details.';
 $pageTheme = 'light';
 include 'header.php';
 ?>
 
 <!-- ===== STEP PROGRESS ===== -->
 <div class="border-b border-zinc-200/60 bg-white relative z-20">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-6">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-10 py-6">
     <div class="step-bar max-w-sm mx-auto flex items-center justify-between">
       <div class="step-item done flex flex-col items-center">
         <div class="step-circle font-bold">✓</div>
@@ -15,7 +15,7 @@ include 'header.php';
       </div>
       <div class="step-item active flex flex-col items-center">
         <div class="step-circle font-bold">2</div>
-        <span class="step-label text-xs uppercase tracking-wider font-bold mt-1.5">Payment</span>
+        <span class="step-label text-xs uppercase tracking-wider font-bold mt-1.5">Details</span>
       </div>
       <div class="step-item flex flex-col items-center">
         <div class="step-circle font-bold">3</div>
@@ -25,160 +25,197 @@ include 'header.php';
   </div>
 </div>
 
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-12 relative z-10">
+<main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-10 py-12 relative z-10">
   <div class="flex flex-col lg:flex-row gap-10">
 
-    <!-- Left: Payment + Address -->
+    <!-- Left side: Forms / OTP (Dynamic Toggle) -->
     <div class="flex-1 flex flex-col gap-8">
+      
+      <!-- ===== STAGE 1: ORDER DETAILS FORM ===== -->
+      <div id="details-container" class="flex flex-col gap-8 animate-fade-in">
+        
+        <!-- Contact & Delivery Information -->
+        <div class="zesto-glass-card rounded-lg border border-zinc-200/60 p-8 bg-white shadow-sm">
+          <h2 class="font-title text-xl font-bold text-zinc-900 mb-2">Confirm Your Details</h2>
+          <p class="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-6">Confirm your items and enter your details below. We’ll send a verification code to your email to confirm this order.</p>
 
-      <!-- Delivery address summary -->
-      <div class="zesto-glass-card rounded-lg border border-zinc-200/60 p-8 bg-white">
-        <h2 class="font-title text-xl font-bold text-zinc-900 mb-6">
-          Delivery Details
-        </h2>
-        <div class="flex items-start gap-4 bg-zinc-50 border border-zinc-200/80 rounded p-4">
-          <span class="material-symbols-outlined text-primary mt-0.5" style="font-size:22px">where_to_vote</span>
-          <div class="flex-1 min-w-0">
-            <p class="font-bold text-sm text-zinc-800" id="checkout-addr1">Loading address…</p>
-            <p class="text-xs text-zinc-500 mt-0.5" id="checkout-addr2"></p>
+          <form id="details-form" onsubmit="triggerVerification(event)" class="flex flex-col gap-5">
+            <!-- Email Input -->
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs uppercase tracking-wider font-bold text-zinc-500" for="checkout-email">Email Address</label>
+              <input id="checkout-email" type="email" class="form-input bg-white border border-zinc-200 text-zinc-800 rounded px-4 py-3 focus:border-primary focus:ring-0 w-full" placeholder="you@example.com" required/>
+            </div>
+
+            <!-- Phone Input -->
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs uppercase tracking-wider font-bold text-zinc-500" for="checkout-phone">Phone Number</label>
+              <input id="checkout-phone" type="tel" class="form-input bg-white border border-zinc-200 text-zinc-800 rounded px-4 py-3 focus:border-primary focus:ring-0 w-full" placeholder="+91 98765 43210" required/>
+            </div>
+
+            <!-- Delivery Address -->
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs uppercase tracking-wider font-bold text-zinc-500" for="checkout-address">Delivery Address</label>
+              <textarea id="checkout-address" rows="3" class="form-input bg-white border border-zinc-200 text-zinc-800 rounded px-4 py-3 focus:border-primary focus:ring-0 w-full leading-relaxed resize-none" placeholder="Enter complete flat number, street name, and city details..." required></textarea>
+            </div>
+            
+            <button type="submit" style="display:none;"></button> <!-- Native Enter support -->
+          </form>
+        </div>
+
+        <!-- Payment Method Selection -->
+        <div class="zesto-glass-card rounded-lg border border-zinc-200/60 p-8 bg-white shadow-sm">
+          <h2 class="font-title text-xl font-bold text-zinc-900 mb-6">Payment Selection</h2>
+          
+          <div class="flex flex-col gap-4 mb-8">
+            <div id="pm-card" class="payment-method-card selected rounded border border-zinc-200 p-4 cursor-pointer flex items-center gap-4 transition-all" onclick="selectPayment('card')">
+              <span class="material-symbols-outlined text-zinc-500" style="font-size:24px">credit_card</span>
+              <div class="flex-1">
+                <p class="font-bold text-sm text-zinc-800">Credit / Debit Card</p>
+                <p class="text-xs text-zinc-400 font-medium">Visa, Mastercard, RuPay</p>
+              </div>
+              <span id="pm-card-check" class="material-symbols-outlined text-primary" style="font-size:22px">check_circle</span>
+            </div>
+
+            <div id="pm-upi" class="payment-method-card rounded border border-zinc-200 p-4 cursor-pointer flex items-center gap-4 transition-all" onclick="selectPayment('upi')">
+              <span class="material-symbols-outlined text-zinc-450" style="font-size:24px">bolt</span>
+              <div class="flex-1">
+                <p class="font-bold text-sm text-zinc-800">UPI / NetBanking</p>
+                <p class="text-xs text-zinc-400 font-medium">Google Pay, PhonePe, Paytm, BHIM</p>
+              </div>
+              <span id="pm-upi-check" class="material-symbols-outlined text-zinc-400" style="font-size:22px">radio_button_unchecked</span>
+            </div>
+
+            <div id="pm-cod" class="payment-method-card rounded border border-zinc-200 p-4 cursor-pointer flex items-center gap-4 transition-all" onclick="selectPayment('cod')">
+              <span class="material-symbols-outlined text-zinc-450" style="font-size:24px">payments</span>
+              <div class="flex-1">
+                <p class="font-bold text-sm text-zinc-800">Cash on Delivery</p>
+                <p class="text-xs text-zinc-400 font-medium">Pay when food arrives at your door</p>
+              </div>
+              <span id="pm-cod-check" class="material-symbols-outlined text-zinc-400" style="font-size:22px">radio_button_unchecked</span>
+            </div>
           </div>
-          <a href="cart.php" class="ml-auto text-xs font-bold uppercase tracking-wider text-primary hover:underline whitespace-nowrap">Change</a>
+
+          <!-- ===== CARD FORM ===== -->
+          <div id="card-form" class="flex flex-col gap-6 animate-fade-in">
+            <!-- Card preview -->
+            <div class="card-preview bg-[#221f1d] rounded-lg p-6 text-white shadow relative overflow-hidden">
+              <div class="flex justify-between items-start mb-8">
+                <div>
+                  <p class="text-white/50 text-[10px] uppercase tracking-wider font-bold mb-1">Card Number</p>
+                  <p class="font-bold text-base tracking-widest font-mono" id="prev-number">•••• •••• •••• ••••</p>
+                </div>
+                <span class="material-symbols-outlined text-white/30" style="font-size:32px">credit_card</span>
+              </div>
+              <div class="flex justify-between items-end">
+                <div>
+                  <p class="text-white/50 text-[9px] uppercase tracking-wider font-bold mb-0.5">CARD HOLDER</p>
+                  <p class="font-bold text-xs font-title tracking-wider" id="prev-name">YOUR NAME</p>
+                </div>
+                <div>
+                  <p class="text-white/50 text-[9px] uppercase tracking-wider font-bold mb-0.5">EXPIRES</p>
+                  <p class="font-bold text-xs font-mono" id="prev-expiry">MM/YY</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs uppercase tracking-wider font-bold text-zinc-500">Card Number</label>
+              <input id="card-number" type="text" class="form-input bg-white border border-zinc-200 text-zinc-800 rounded px-4 py-3 focus:border-primary focus:ring-0 w-full" placeholder="1234 5678 9012 3456" maxlength="19"
+                oninput="formatCardNumber(this); updateCardPreview()"/>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs uppercase tracking-wider font-bold text-zinc-500">Cardholder Name</label>
+              <input id="card-name" type="text" class="form-input bg-white border border-zinc-200 text-zinc-800 rounded px-4 py-3 focus:border-primary focus:ring-0 w-full" placeholder="As on card"
+                oninput="updateCardPreview()"/>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="flex flex-col gap-1.5">
+                <label class="text-xs uppercase tracking-wider font-bold text-zinc-500">Expiry Date</label>
+                <input id="card-expiry" type="text" class="form-input bg-white border border-zinc-200 text-zinc-800 rounded px-4 py-3 focus:border-primary focus:ring-0 w-full" placeholder="MM/YY" maxlength="5"
+                  oninput="formatExpiry(this); updateCardPreview()"/>
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <label class="text-xs uppercase tracking-wider font-bold text-zinc-500">CVV</label>
+                <div class="relative">
+                  <input id="card-cvv" type="password" class="form-input bg-white border border-zinc-200 text-zinc-800 rounded px-4 py-3 pr-12 focus:border-primary focus:ring-0 w-full" placeholder="•••" maxlength="4"/>
+                  <button type="button" class="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-primary" onclick="togglePwd('card-cvv', this)">
+                    <span class="material-symbols-outlined" style="font-size:18px">visibility</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== UPI FORM ===== -->
+          <div id="upi-form" class="hidden flex flex-col gap-6 animate-fade-in">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs uppercase tracking-wider font-bold text-zinc-500">UPI ID</label>
+              <input id="upi-id" type="text" class="form-input bg-white border border-zinc-200 text-zinc-800 rounded px-4 py-3 focus:border-primary focus:ring-0 w-full" placeholder="yourname@upi"/>
+            </div>
+            <div class="grid grid-cols-4 gap-3">
+              <button onclick="setUPI('gpay')" class="upi-app-btn flex flex-col items-center gap-1.5 py-3 rounded border border-zinc-200 hover:border-primary hover:bg-zinc-50 transition-all">
+                <span class="text-sm font-extrabold text-zinc-850">GPay</span>
+              </button>
+              <button onclick="setUPI('phonepe')" class="upi-app-btn flex flex-col items-center gap-1.5 py-3 rounded border border-zinc-200 hover:border-primary hover:bg-zinc-50 transition-all">
+                <span class="text-sm font-extrabold text-zinc-850">PhonePe</span>
+              </button>
+              <button onclick="setUPI('paytm')" class="upi-app-btn flex flex-col items-center gap-1.5 py-3 rounded border border-zinc-200 hover:border-primary hover:bg-zinc-50 transition-all">
+                <span class="text-sm font-extrabold text-zinc-850">Paytm</span>
+              </button>
+              <button onclick="setUPI('bhim')" class="upi-app-btn flex flex-col items-center gap-1.5 py-3 rounded border border-zinc-200 hover:border-primary hover:bg-zinc-50 transition-all">
+                <span class="text-sm font-extrabold text-zinc-850">BHIM</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- ===== COD FORM ===== -->
+          <div id="cod-form" class="hidden animate-fade-in">
+            <div class="bg-zinc-50 border border-zinc-200/80 rounded p-5 flex items-start gap-4">
+              <span class="material-symbols-outlined text-primary mt-0.5" style="font-size:24px">payments</span>
+              <div>
+                <p class="font-bold text-sm text-zinc-800 uppercase tracking-wide">Cash on Delivery</p>
+                <p class="text-xs text-zinc-500 mt-2 leading-relaxed font-medium">Please keep exact change ready. Our delivery partner will collect payment when your order is handed over.</p>
+                <p class="text-xs font-bold text-primary mt-3 flex items-center gap-1.5 uppercase tracking-wider">
+                  <span class="material-symbols-outlined" style="font-size:16px">info</span>
+                  COD available for orders up to ₹2,000
+                </p>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
-
-      <!-- Payment Methods -->
-      <div class="zesto-glass-card rounded-lg border border-zinc-200/60 p-8 bg-white">
-        <h2 class="font-title text-xl font-bold text-zinc-900 mb-6">
-          Payment Method
-        </h2>
-
-        <!-- Method selector -->
-        <div class="flex flex-col gap-4 mb-8">
-          <div id="pm-card" class="payment-method-card selected rounded border border-zinc-200 p-4 cursor-pointer flex items-center gap-4 transition-all" onclick="selectPayment('card')">
-            <span class="material-symbols-outlined text-zinc-500" style="font-size:24px">credit_card</span>
-            <div class="flex-1">
-              <p class="font-bold text-sm text-zinc-800">Credit / Debit Card</p>
-              <p class="text-xs text-zinc-400 font-medium">Visa, Mastercard, RuPay</p>
-            </div>
-            <span id="pm-card-check" class="material-symbols-outlined text-primary" style="font-size:22px">check_circle</span>
-          </div>
-
-          <div id="pm-upi" class="payment-method-card rounded border border-zinc-200 p-4 cursor-pointer flex items-center gap-4 transition-all" onclick="selectPayment('upi')">
-            <span class="material-symbols-outlined text-zinc-450" style="font-size:24px">bolt</span>
-            <div class="flex-1">
-              <p class="font-bold text-sm text-zinc-800">UPI / NetBanking</p>
-              <p class="text-xs text-zinc-400 font-medium">Google Pay, PhonePe, Paytm, BHIM</p>
-            </div>
-            <span id="pm-upi-check" class="material-symbols-outlined text-zinc-400" style="font-size:22px">radio_button_unchecked</span>
-          </div>
-
-          <div id="pm-cod" class="payment-method-card rounded border border-zinc-200 p-4 cursor-pointer flex items-center gap-4 transition-all" onclick="selectPayment('cod')">
-            <span class="material-symbols-outlined text-zinc-450" style="font-size:24px">payments</span>
-            <div class="flex-1">
-              <p class="font-bold text-sm text-zinc-800">Cash on Delivery</p>
-              <p class="text-xs text-zinc-400 font-medium">Pay when food arrives at your door</p>
-            </div>
-            <span id="pm-cod-check" class="material-symbols-outlined text-zinc-400" style="font-size:22px">radio_button_unchecked</span>
+      
+      <!-- ===== STAGE 2: OTP VERIFICATION VIEW ===== -->
+      <div id="otp-container" class="hidden zesto-glass-card rounded-lg border border-zinc-200/60 p-8 bg-white shadow-sm animate-scale-in">
+        <div class="flex justify-center mb-6">
+          <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+            <span class="material-symbols-outlined" style="font-size:32px">mark_email_read</span>
           </div>
         </div>
 
-        <!-- ===== CARD FORM ===== -->
-        <div id="card-form" class="flex flex-col gap-6 animate-fade-in">
-          <!-- Card preview -->
-          <div class="card-preview bg-[#221f1d] rounded-lg p-6 text-white shadow relative overflow-hidden">
-            <div class="flex justify-between items-start mb-8">
-              <div>
-                <p class="text-white/50 text-[10px] uppercase tracking-wider font-bold mb-1">Card Number</p>
-                <p class="font-bold text-base tracking-widest font-mono" id="prev-number">•••• •••• •••• ••••</p>
-              </div>
-              <span class="material-symbols-outlined text-white/30" style="font-size:32px">credit_card</span>
-            </div>
-            <div class="flex justify-between items-end">
-              <div>
-                <p class="text-white/50 text-[9px] uppercase tracking-wider font-bold mb-0.5">CARD HOLDER</p>
-                <p class="font-bold text-xs font-title tracking-wider" id="prev-name">YOUR NAME</p>
-              </div>
-              <div>
-                <p class="text-white/50 text-[9px] uppercase tracking-wider font-bold mb-0.5">EXPIRES</p>
-                <p class="font-bold text-xs font-mono" id="prev-expiry">MM/YY</p>
-              </div>
-            </div>
+        <h2 class="font-title text-2xl font-bold text-zinc-900 text-center mb-2">Enter verification code</h2>
+        <p class="text-zinc-500 text-xs text-center font-bold uppercase tracking-wider mb-8">We sent a 4-digit code to your email.</p>
+
+        <div class="flex flex-col gap-6 max-w-xs mx-auto">
+          <!-- OTP input box -->
+          <div class="flex flex-col gap-1.5 text-center">
+            <label class="text-xs uppercase tracking-wider font-bold text-zinc-500 mb-2">Verification Code</label>
+            <input id="otp-input" type="text" class="form-input bg-white border border-zinc-200 text-zinc-900 rounded-lg px-4 py-3.5 text-center font-mono font-bold text-xl tracking-[0.4em] focus:border-primary focus:ring-0" placeholder="••••" maxlength="4" autocomplete="one-time-code" required/>
           </div>
 
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs uppercase tracking-wider font-bold text-zinc-500">Card Number</label>
-            <input id="card-number" type="text" class="form-input bg-white border border-zinc-200 text-zinc-800 rounded px-4 py-3 focus:border-primary focus:ring-0 w-full" placeholder="1234 5678 9012 3456" maxlength="19"
-              oninput="formatCardNumber(this); updateCardPreview()"/>
-          </div>
-
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs uppercase tracking-wider font-bold text-zinc-500">Cardholder Name</label>
-            <input id="card-name" type="text" class="form-input bg-white border border-zinc-200 text-zinc-800 rounded px-4 py-3 focus:border-primary focus:ring-0 w-full" placeholder="As on card"
-              oninput="updateCardPreview()"/>
-          </div>
-
-          <div class="grid grid-cols-2 gap-4">
-            <div class="flex flex-col gap-1.5">
-              <label class="text-xs uppercase tracking-wider font-bold text-zinc-500">Expiry Date</label>
-              <input id="card-expiry" type="text" class="form-input bg-white border border-zinc-200 text-zinc-800 rounded px-4 py-3 focus:border-primary focus:ring-0 w-full" placeholder="MM/YY" maxlength="5"
-                oninput="formatExpiry(this); updateCardPreview()"/>
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <label class="text-xs uppercase tracking-wider font-bold text-zinc-500">CVV</label>
-              <div class="relative">
-                <input id="card-cvv" type="password" class="form-input bg-white border border-zinc-200 text-zinc-800 rounded px-4 py-3 pr-12 focus:border-primary focus:ring-0 w-full" placeholder="•••" maxlength="4"/>
-                <button type="button" class="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-primary" onclick="togglePwd('card-cvv', this)">
-                  <span class="material-symbols-outlined" style="font-size:18px">visibility</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <label class="flex items-center gap-3.5 cursor-pointer">
-            <input type="checkbox" class="w-4 h-4 accent-primary rounded bg-white border-zinc-200"/>
-            <span class="text-xs uppercase tracking-wider font-bold text-zinc-500 leading-none">Save card for future orders</span>
-          </label>
-        </div>
-
-        <!-- ===== UPI FORM ===== -->
-        <div id="upi-form" class="hidden flex flex-col gap-6 animate-fade-in">
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs uppercase tracking-wider font-bold text-zinc-500">UPI ID</label>
-            <input id="upi-id" type="text" class="form-input bg-white border border-zinc-200 text-zinc-800 rounded px-4 py-3 focus:border-primary focus:ring-0 w-full" placeholder="yourname@upi"/>
-          </div>
-          <div class="grid grid-cols-4 gap-3">
-            <button onclick="setUPI('gpay')" class="upi-app-btn flex flex-col items-center gap-1.5 py-3 rounded border border-zinc-200 hover:border-primary hover:bg-zinc-50 transition-all">
-              <span class="text-sm font-extrabold text-zinc-850">GPay</span>
-            </button>
-            <button onclick="setUPI('phonepe')" class="upi-app-btn flex flex-col items-center gap-1.5 py-3 rounded border border-zinc-200 hover:border-primary hover:bg-zinc-50 transition-all">
-              <span class="text-sm font-extrabold text-zinc-850">PhonePe</span>
-            </button>
-            <button onclick="setUPI('paytm')" class="upi-app-btn flex flex-col items-center gap-1.5 py-3 rounded border border-zinc-200 hover:border-primary hover:bg-zinc-50 transition-all">
-              <span class="text-sm font-extrabold text-zinc-850">Paytm</span>
-            </button>
-            <button onclick="setUPI('bhim')" class="upi-app-btn flex flex-col items-center gap-1.5 py-3 rounded border border-zinc-200 hover:border-primary hover:bg-zinc-50 transition-all">
-              <span class="text-sm font-extrabold text-zinc-850">BHIM</span>
-            </button>
-          </div>
-          <p class="text-xs text-zinc-400 font-bold uppercase tracking-wider">Enter your UPI ID or select your preferred provider</p>
-        </div>
-
-        <!-- ===== COD FORM ===== -->
-        <div id="cod-form" class="hidden animate-fade-in">
-          <div class="bg-zinc-50 border border-zinc-200/80 rounded p-5 flex items-start gap-4">
-            <span class="material-symbols-outlined text-primary mt-0.5" style="font-size:24px">payments</span>
-            <div>
-              <p class="font-bold text-sm text-zinc-800 uppercase tracking-wide">Cash on Delivery</p>
-              <p class="text-xs text-zinc-500 mt-2 leading-relaxed font-medium">Please keep exact change ready. Our delivery partner will collect payment when your order is handed over.</p>
-              <p class="text-xs font-bold text-primary mt-3 flex items-center gap-1.5 uppercase tracking-wider">
-                <span class="material-symbols-outlined" style="font-size:16px">info</span>
-                COD available for orders up to ₹2,000
-              </p>
-            </div>
+          <button onclick="placeOrder()" id="place-order-btn" class="btn-primary w-full uppercase tracking-widest text-xs font-bold py-3.5 mt-2">
+            Confirm Order
+          </button>
+          
+          <div class="text-center">
+            <button onclick="resendCode()" class="text-xs font-bold uppercase tracking-wider text-primary hover:underline">Resend code</button>
           </div>
         </div>
-
       </div>
+      
     </div>
 
     <!-- Right: Order Summary -->
@@ -221,8 +258,9 @@ include 'header.php';
           </div>
         </div>
 
-        <button onclick="placeOrder()" id="place-order-btn" class="btn-primary w-full uppercase tracking-widest text-xs font-bold py-3.5">
-          Place Order
+        <!-- Stages-Specific CTA Trigger button -->
+        <button id="send-otp-btn" onclick="triggerSubmitDetails()" class="btn-primary w-full uppercase tracking-widest text-xs font-bold py-3.5">
+          Send Verification Code
         </button>
 
         <div class="mt-4 flex items-center justify-center gap-2 text-xs font-bold text-zinc-400 uppercase tracking-wider">
@@ -250,7 +288,7 @@ let selectedPayment = 'card';
 
 document.addEventListener('DOMContentLoaded', () => {
   loadCheckoutData();
-  loadAddress();
+  loadSavedDetails();
 });
 
 function loadCheckoutData() {
@@ -282,15 +320,17 @@ function loadCheckoutData() {
   }
 }
 
-function loadAddress() {
+function loadSavedDetails() {
+  // Try loading saved address from cart
   const loc = JSON.parse(localStorage.getItem('zyrop_delivery_address') || 'null');
   if (loc && loc.label) {
-    const parts = loc.label.split(',');
-    document.getElementById('checkout-addr1').textContent = parts.slice(0,2).join(',').trim();
-    document.getElementById('checkout-addr2').textContent = parts.slice(2).join(',').trim();
-  } else {
-    document.getElementById('checkout-addr1').textContent = 'Address not set';
-    document.getElementById('checkout-addr2').textContent = 'Go back to cart to set delivery address';
+    document.getElementById('checkout-address').value = loc.label;
+  }
+  // Try loading saved email/phone
+  const savedUser = JSON.parse(localStorage.getItem('zyrop_user') || 'null');
+  if (savedUser && savedUser.loggedIn) {
+    if (savedUser.email) document.getElementById('checkout-email').value = savedUser.email;
+    if (savedUser.phone) document.getElementById('checkout-phone').value = savedUser.phone;
   }
 }
 
@@ -352,6 +392,38 @@ function setUPI(app) {
   event.currentTarget.classList.add('border-primary','bg-zinc-50');
 }
 
+/* ===== Form Details Trigger ===== */
+function triggerSubmitDetails() {
+  // Proactively trigger HTML form validation submit
+  const btn = document.querySelector('#details-form button[type="submit"]');
+  if (btn) btn.click();
+}
+
+function triggerVerification(e) {
+  e.preventDefault();
+  
+  // 1. Validate payment details
+  if (!validatePayment()) return;
+  
+  // 2. Hide Stage 1 & Show Stage 2 (OTP)
+  document.getElementById('details-container').classList.add('hidden');
+  document.getElementById('otp-container').classList.remove('hidden');
+  
+  // 3. Hide details submit button in sidebar order summary card
+  document.getElementById('send-otp-btn').classList.add('hidden');
+  
+  // 4. Focus OTP input
+  document.getElementById('otp-input').focus();
+  
+  showToast('Verification code sent!', 'success');
+}
+
+function resendCode() {
+  showToast('A new 4-digit code has been sent!', 'success');
+  document.getElementById('otp-input').value = '';
+  document.getElementById('otp-input').focus();
+}
+
 /* ===== Validate ===== */
 function validatePayment() {
   if (selectedPayment === 'card') {
@@ -373,7 +445,12 @@ function validatePayment() {
 
 /* ===== Place Order ===== */
 function placeOrder() {
-  if (!validatePayment()) return;
+  const otpVal = document.getElementById('otp-input').value.trim();
+  if (otpVal.length < 4) {
+    showToast('Please enter the 4-digit verification code.', 'error');
+    return;
+  }
+  
   const btn = document.getElementById('place-order-btn');
   const origHTML = btn.innerHTML;
   btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:20px;animation:spin 0.8s linear infinite">progress_activity</span> Processing…';
@@ -381,7 +458,16 @@ function placeOrder() {
 
   const cart = ZyropCart.getCart();
   const meta = JSON.parse(localStorage.getItem('zyrop_order_meta') || '{}');
-  const address = JSON.parse(localStorage.getItem('zyrop_delivery_address') || 'null') || { label: 'Address not set' };
+  
+  // Read details directly from inputs
+  const email = document.getElementById('checkout-email').value.trim();
+  const phone = document.getElementById('checkout-phone').value.trim();
+  const addressLabel = document.getElementById('checkout-address').value.trim();
+  
+  const addressObj = {
+    label: addressLabel,
+    full: addressLabel
+  };
 
   fetch('place_order_api.php', {
     method: 'POST',
@@ -390,7 +476,9 @@ function placeOrder() {
       paymentMethod: selectedPayment,
       cart: cart,
       meta: meta,
-      address: address
+      address: addressObj,
+      email: email,
+      phone: phone
     })
   })
   .then(res => res.json())
@@ -405,7 +493,7 @@ function placeOrder() {
         paymentMethod: selectedPayment,
         cart: cart,
         meta: meta,
-        address: address,
+        address: addressObj,
         placedAt: new Date().toISOString()
       }));
 
