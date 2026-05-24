@@ -39,174 +39,105 @@ $pmIcons   = ['card' => 'credit_card', 'upi' => 'bolt', 'cod' => 'payments'];
 $pmLabels  = ['card' => 'Paid via Card', 'upi' => 'Paid via UPI', 'cod' => 'Cash on Delivery'];
 $paymentMode = $order['payment_mode'] ?? 'cod';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Order Confirmed — ZyropFoodOrder</title>
-  <meta name="description" content="Your food order has been placed successfully! Track your delivery in real time."/>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/zyrop.css"/>
-  <script id="tailwind-config">
-    tailwind.config = {
-      darkMode:"class",
-      theme:{extend:{colors:{"surface-container-low":"#f5f3f3","surface-container-lowest":"#ffffff","surface-bright":"#fbf9f8","on-error":"#ffffff","on-primary":"#ffffff","outline":"#907065","surface-container-high":"#e9e8e7","on-tertiary":"#ffffff","surface-variant":"#e4e2e2","tertiary":"#006b29","surface-dim":"#dbdad9","on-secondary":"#ffffff","error":"#ba1a1a","surface":"#fbf9f8","primary-fixed":"#ffdbd0","primary-container":"#d24200","primary":"#a83300","error-container":"#ffdad6","on-surface-variant":"#5c4037","secondary":"#5f5e5e","tertiary-container":"#008735","inverse-surface":"#303031","on-background":"#1b1c1c","background":"#fbf9f8","outline-variant":"#e5beb2","inverse-on-surface":"#f2f0f0","surface-tint":"#ac3500","secondary-container":"#e5e2e1","surface-container":"#efeded","primary-fixed-dim":"#ffb59d","on-surface":"#1b1c1c","surface-container-highest":"#e4e2e2","inverse-primary":"#ffb59d"}}}
-    }
-  </script>
-  <style>
-    /* Confetti-style animated circles */
-    @keyframes float-up {
-      0%   { transform: translateY(0) rotate(0deg); opacity:1; }
-      100% { transform: translateY(-600px) rotate(720deg); opacity:0; }
-    }
-    .confetti-piece {
-      position: fixed;
-      width: 10px; height: 10px;
-      border-radius: 2px;
-      animation: float-up linear forwards;
-      pointer-events: none;
-      z-index: 9999;
-    }
+<?php
+$pageTitle = 'Order Confirmed — Zesto';
+$pageDesc = 'Your food order has been placed successfully! Track your delivery in real time.';
+$pageTheme = 'light';
+include 'header.php';
+?>
 
-    /* Pulsing delivery dot */
-    @keyframes delivery-pulse {
-      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(168,51,0,0.4); }
-      50%       { transform: scale(1.15); box-shadow: 0 0 0 8px rgba(168,51,0,0); }
-    }
-    .delivery-dot { animation: delivery-pulse 1.8s ease-in-out infinite; }
+<style>
+  /* Pulsing delivery dot */
+  @keyframes delivery-pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(138,79,53,0.3); }
+    50%       { transform: scale(1.15); box-shadow: 0 0 0 6px rgba(138,79,53,0); }
+  }
+  .delivery-dot { animation: delivery-pulse 1.8s ease-in-out infinite; }
 
-    /* Track progress fill animation */
-    .track-fill {
-      height: 2px;
-      background: #006b29;
-      transition: width 1s ease;
-    }
+  /* Track progress fill animation */
+  .track-fill {
+    height: 2px;
+    background: #526043;
+    transition: width 1s ease;
+  }
 
-    /* Check SVG draw */
-    .check-svg circle {
-      stroke-dasharray: 280;
-      stroke-dashoffset: 280;
-      animation: draw-circle 0.6s ease forwards;
-    }
-    .check-svg path {
-      stroke-dasharray: 80;
-      stroke-dashoffset: 80;
-      animation: draw-check 0.5s ease 0.5s forwards;
-    }
-    @keyframes draw-circle { to { stroke-dashoffset: 0; } }
-    @keyframes draw-check  { to { stroke-dashoffset: 0; } }
-
-    /* ETA countdown */
-    .eta-ring {
-      width: 80px; height: 80px;
-      border-radius: 50%;
-      border: 4px solid #ffdbd0;
-      display: flex; align-items: center; justify-content: center;
-      position: relative;
-    }
-    .eta-ring::before {
-      content:'';
-      position:absolute; inset:-4px;
-      border-radius:50%;
-      border: 4px solid transparent;
-      border-top-color: #a83300;
-      animation: spin 2s linear infinite;
-    }
-  </style>
-</head>
-<body class="bg-surface text-on-surface min-h-screen">
-
-<!-- ===== HEADER ===== -->
-<header class="bg-surface border-b border-outline-variant/30">
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-10 h-16 flex items-center justify-between">
-    <a href="index.php" class="font-extrabold text-xl text-primary">ZyropFoodOrder</a>
-    <div class="flex items-center gap-4">
-      <a href="index.php" class="flex items-center gap-1 text-secondary hover:text-primary transition-colors text-sm font-semibold">
-        <span class="material-symbols-outlined" style="font-size:18px">home</span>
-        Home
-      </a>
-      <div class="h-5 w-px bg-outline-variant"></div>
-      <a href="logout.php" class="flex items-center gap-1 text-secondary hover:text-error transition-colors text-sm font-semibold" title="Logout">
-        <span class="material-symbols-outlined" style="font-size:18px">logout</span>
-        Logout
-      </a>
-    </div>
-  </div>
-</header>
+  /* ETA ring visual */
+  .eta-ring-premium {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    border: 2px solid #e8e5e0;
+    display: flex; align-items: center; justify-content: center;
+  }
+</style>
 
 <!-- ===== STEP PROGRESS ===== -->
-<div class="bg-surface-container-low border-b border-outline-variant/20">
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-10 py-4">
-    <div class="step-bar max-w-sm mx-auto">
-      <div class="step-item done">
-        <div class="step-circle"><span class="material-symbols-outlined" style="font-size:16px">check</span></div>
-        <span class="step-label">Cart</span>
+<div class="border-b border-zinc-200/60 bg-white relative z-20">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-10 py-6">
+    <div class="step-bar max-w-sm mx-auto flex items-center justify-between">
+      <div class="step-item done flex flex-col items-center">
+        <div class="step-circle font-bold">✓</div>
+        <span class="step-label text-xs uppercase tracking-wider font-bold mt-1.5 text-[#526043]">Cart</span>
       </div>
-      <div class="step-item done">
-        <div class="step-circle"><span class="material-symbols-outlined" style="font-size:16px">check</span></div>
-        <span class="step-label">Payment</span>
+      <div class="step-item done flex flex-col items-center">
+        <div class="step-circle font-bold">✓</div>
+        <span class="step-label text-xs uppercase tracking-wider font-bold mt-1.5 text-[#526043]">Payment</span>
       </div>
-      <div class="step-item active">
-        <div class="step-circle">3</div>
-        <span class="step-label">Confirmed</span>
+      <div class="step-item active flex flex-col items-center">
+        <div class="step-circle font-bold">3</div>
+        <span class="step-label text-xs uppercase tracking-wider font-bold mt-1.5">Confirm</span>
       </div>
     </div>
   </div>
 </div>
 
-<main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-10 py-10 pb-20">
-  <div class="flex flex-col lg:flex-row gap-8">
+<main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-10 py-12 pb-24 relative z-10">
+  <div class="flex flex-col lg:flex-row gap-10">
 
     <!-- Left: Success + Tracking -->
-    <div class="flex-1 flex flex-col gap-6">
+    <div class="flex-1 flex flex-col gap-8">
 
       <!-- Success Card -->
-      <div class="bg-white rounded-3xl border border-outline-variant/30 p-8 text-center animate-scale-in">
-        <!-- Checkmark -->
+      <div class="zesto-glass-card rounded-lg border border-zinc-200/60 p-8 text-center bg-white animate-scale-in">
+        <!-- Minimal Checkmark Icon -->
         <div class="flex justify-center mb-6">
-          <svg class="check-svg" width="90" height="90" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="45" cy="45" r="42" stroke="#006b29" stroke-width="4" fill="#f0fdf4"/>
-            <path d="M28 46 L40 58 L62 34" stroke="#006b29" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-          </svg>
+          <div class="w-16 h-16 rounded-full bg-[#526043]/10 border border-[#526043]/20 flex items-center justify-center text-[#526043]">
+            <span class="material-symbols-outlined" style="font-size:32px">verified</span>
+          </div>
         </div>
 
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-on-surface mb-2">Order Placed! 🎉</h1>
-        <p class="text-secondary text-sm mb-4">Your food is being prepared by the restaurant.</p>
+        <h1 class="font-title text-3xl font-extrabold text-zinc-900 mb-2">Order Confirmed</h1>
+        <p class="text-zinc-500 text-sm mb-6">Your order is being freshly prepared by the kitchen.</p>
 
-        <div class="inline-flex items-center gap-2 bg-surface-container-low border border-outline-variant/30 rounded-xl px-5 py-3 mb-6">
-          <span class="material-symbols-outlined text-secondary" style="font-size:18px">receipt_long</span>
-          <span class="text-sm text-secondary">Order ID:</span>
-          <span class="font-extrabold text-on-surface" id="order-id"><?= htmlspecialchars($order['order_id']) ?></span>
-          <button onclick="copyOrderId()" class="material-symbols-outlined text-secondary hover:text-primary transition-colors" style="font-size:16px">content_copy</button>
+        <div class="inline-flex items-center gap-3 bg-zinc-50 border border-zinc-200 rounded px-5 py-3 mb-8">
+          <span class="material-symbols-outlined text-zinc-400" style="font-size:18px">receipt_long</span>
+          <span class="text-xs uppercase tracking-wider font-bold text-zinc-400">Order ID:</span>
+          <span class="font-bold text-zinc-800 text-sm font-mono" id="order-id"><?= htmlspecialchars($order['order_id']) ?></span>
+          <button onclick="copyOrderId()" class="material-symbols-outlined text-zinc-450 hover:text-primary transition-colors" style="font-size:16px">content_copy</button>
         </div>
 
         <!-- ETA -->
-        <div class="flex items-center justify-center gap-6">
-          <div class="eta-ring">
+        <div class="flex items-center justify-center gap-6 border-t border-zinc-200/60 pt-6">
+          <div class="eta-ring-premium">
             <div class="text-center">
-              <p class="text-xl font-extrabold text-primary" id="eta-minutes">35</p>
-              <p class="text-[10px] text-secondary font-semibold">MINS</p>
+              <p class="text-xl font-extrabold text-primary font-title" id="eta-minutes">35</p>
+              <p class="text-[9px] text-zinc-400 font-bold uppercase tracking-wider">MINS</p>
             </div>
           </div>
           <div class="text-left">
-            <p class="font-bold text-sm text-on-surface">Estimated Delivery</p>
-            <p class="text-secondary text-xs" id="eta-time">by 00:00 AM</p>
-            <div class="flex items-center gap-1 mt-1">
-              <span class="w-2 h-2 bg-tertiary rounded-full delivery-dot"></span>
-              <span class="text-xs text-tertiary font-semibold">Live tracking active</span>
+            <p class="text-xs uppercase tracking-wider font-bold text-zinc-400">Estimated Delivery</p>
+            <p class="text-zinc-850 font-bold text-sm mt-0.5" id="eta-time">by 00:00 AM</p>
+            <div class="flex items-center gap-1.5 mt-1.5">
+              <span class="w-2 h-2 bg-[#526043] rounded-full delivery-dot"></span>
+              <span class="text-xs text-[#526043] font-bold uppercase tracking-wide">Live Tracking Active</span>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Order Tracking Timeline -->
-      <div class="bg-white rounded-2xl border border-outline-variant/30 p-6">
-        <h2 class="font-extrabold text-base text-on-surface mb-6 flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary" style="font-size:20px">delivery_dining</span>
-          Live Order Tracking
+      <div class="zesto-glass-card rounded-lg border border-zinc-200/60 p-8 bg-white">
+        <h2 class="font-title text-xl font-bold text-zinc-900 mb-8">
+          Delivery Tracking
         </h2>
 
         <div class="flex flex-col gap-6" id="tracking-steps">
@@ -215,14 +146,14 @@ $paymentMode = $order['payment_mode'] ?? 'cod';
       </div>
 
       <!-- Delivery Address Reminder -->
-      <div class="bg-white rounded-2xl border border-outline-variant/30 p-5">
-        <div class="flex items-start gap-3">
+      <div class="zesto-glass-card rounded-lg border border-zinc-200/60 p-6 bg-white">
+        <div class="flex items-start gap-4">
           <span class="material-symbols-outlined text-primary mt-0.5" style="font-size:22px">location_on</span>
           <div class="flex-1">
-            <p class="font-bold text-sm text-on-surface">Delivering to</p>
-            <p class="text-xs text-secondary mt-0.5" id="confirm-addr"><?= htmlspecialchars($order['address']) ?></p>
+            <p class="text-xs uppercase tracking-wider font-bold text-zinc-400">Delivering to</p>
+            <p class="text-sm font-semibold text-zinc-800 mt-1" id="confirm-addr"><?= htmlspecialchars($order['address']) ?></p>
           </div>
-          <div class="flex items-center gap-1 text-xs font-bold text-secondary bg-surface-container rounded-full px-3 py-1">
+          <div class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-zinc-500 bg-zinc-50 border border-zinc-200 rounded px-3 py-1">
             <span class="material-symbols-outlined" style="font-size:14px">schedule</span>
             <span id="confirm-time">~35 min</span>
           </div>
@@ -235,72 +166,68 @@ $paymentMode = $order['payment_mode'] ?? 'cod';
     <div class="lg:w-[340px] xl:w-[380px] flex-shrink-0 flex flex-col gap-6">
 
       <!-- Order Items -->
-      <div class="bg-white rounded-2xl border border-outline-variant/30 p-6">
-        <h2 class="font-extrabold text-base text-on-surface mb-4">Your Order</h2>
+      <div class="zesto-glass-card rounded-lg border border-zinc-200/60 p-8 bg-white">
+        <h2 class="font-title text-lg font-bold text-zinc-900 mb-5">Your Order</h2>
         <div id="confirm-items" class="flex flex-col gap-4">
           <?php foreach ($orderItems as $item): ?>
             <div class="flex items-center gap-3">
-              <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0 font-bold text-lg">
-                🍽️
-              </div>
+              <div class="w-1.5 h-1.5 rounded-full bg-zinc-400 flex-shrink-0"></div>
               <div class="flex-1 min-w-0">
-                <p class="text-sm font-semibold text-on-surface truncate"><?= htmlspecialchars($item['name']) ?></p>
-                <p class="text-xs text-secondary"><?= $item['quantity'] ?> × ₹<?= number_format($item['price'], 2) ?></p>
+                <p class="text-sm font-bold text-zinc-800 truncate"><?= htmlspecialchars($item['name']) ?></p>
+                <p class="text-xs font-bold text-zinc-450 mt-0.5"><?= $item['quantity'] ?> × ₹<?= number_format($item['price'], 2) ?></p>
               </div>
-              <span class="text-sm font-bold">₹<?= number_format($item['quantity'] * $item['price'], 2) ?></span>
+              <span class="text-sm font-extrabold text-zinc-900">₹<?= number_format($item['quantity'] * $item['price'], 2) ?></span>
             </div>
           <?php endforeach; ?>
         </div>
       </div>
 
       <!-- Bill Summary -->
-      <div class="bg-white rounded-2xl border border-outline-variant/30 p-6">
-        <h2 class="font-extrabold text-base text-on-surface mb-4">Bill Summary</h2>
-        <div class="flex flex-col gap-2 text-sm" id="confirm-summary">
-          <div class="flex justify-between"><span class="text-secondary">Subtotal</span><span class="font-semibold">₹<?= number_format($order['subtotal'], 2) ?></span></div>
-          <div class="flex justify-between"><span class="text-secondary">Delivery</span><span class="font-semibold">₹<?= number_format($order['delivery_fee'], 2) ?></span></div>
-          <div class="flex justify-between"><span class="text-secondary">Platform fee</span><span class="font-semibold">₹<?= number_format($order['platform_fee'], 2) ?></span></div>
-          <div class="flex justify-between"><span class="text-secondary">GST</span><span class="font-semibold">₹<?= number_format($order['gst'], 2) ?></span></div>
+      <div class="zesto-glass-card rounded-lg border border-zinc-200/60 p-8 bg-white">
+        <h2 class="font-title text-lg font-bold text-zinc-900 mb-5">Bill Summary</h2>
+        <div class="flex flex-col gap-3 text-xs font-bold uppercase tracking-wider text-zinc-500" id="confirm-summary">
+          <div class="flex justify-between"><span>Subtotal</span><span class="font-extrabold text-zinc-900">₹<?= number_format($order['subtotal'], 2) ?></span></div>
+          <div class="flex justify-between"><span>Delivery</span><span class="font-extrabold text-zinc-900">₹<?= number_format($order['delivery_fee'], 2) ?></span></div>
+          <div class="flex justify-between"><span>Platform fee</span><span class="font-extrabold text-zinc-900">₹<?= number_format($order['platform_fee'], 2) ?></span></div>
+          <div class="flex justify-between"><span>GST</span><span class="font-extrabold text-zinc-900">₹<?= number_format($order['gst'], 2) ?></span></div>
           <?php if ($order['discount'] > 0): ?>
-            <div class="flex justify-between text-tertiary"><span>Discount</span><span class="font-semibold">-₹<?= number_format($order['discount'], 2) ?></span></div>
+            <div class="flex justify-between text-tertiary"><span>Discount</span><span class="font-extrabold text-tertiary">-₹<?= number_format($order['discount'], 2) ?></span></div>
           <?php endif; ?>
         </div>
-        <div class="border-t border-outline-variant/20 mt-4 pt-4 flex justify-between items-center">
-          <span class="font-extrabold text-base">Total Paid</span>
-          <span class="font-extrabold text-lg text-primary" id="confirm-total">₹<?= number_format($order['total'], 2) ?></span>
+        <div class="border-t border-zinc-200/60 mt-5 pt-4 flex justify-between items-center">
+          <span class="font-title text-base font-bold text-zinc-900">Total Paid</span>
+          <span class="font-title text-xl font-extrabold text-primary" id="confirm-total">₹<?= number_format($order['total'], 2) ?></span>
         </div>
-        <div class="mt-3 flex items-center gap-2 text-xs text-secondary">
+        <div class="mt-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-400">
           <span class="material-symbols-outlined" style="font-size:16px" id="confirm-pm-icon"><?= $pmIcons[$paymentMode] ?? 'payments' ?></span>
           <span id="confirm-pm-label"><?= $pmLabels[$paymentMode] ?? 'Paid Securely' ?></span>
         </div>
       </div>
 
       <!-- Action Buttons -->
-      <div class="flex flex-col gap-3">
-        <a href="index.php" class="btn-primary w-full text-center">
-          <span class="material-symbols-outlined" style="font-size:20px">home</span>
+      <div class="flex flex-col gap-4">
+        <a href="index.php" class="btn-primary w-full uppercase tracking-widest text-xs font-bold py-3.5">
           Back to Home
         </a>
-        <a href="index.php" class="btn-outline w-full text-center">
-          <span class="material-symbols-outlined" style="font-size:18px">restaurant_menu</span>
+        <a href="index.php#menu" class="btn-outline w-full text-center uppercase tracking-widest text-xs font-bold py-3.5 rounded flex items-center justify-center gap-1.5">
           Order Again
         </a>
-        <button onclick="shareOrder()" class="flex items-center justify-center gap-2 text-sm font-semibold text-secondary hover:text-primary transition-colors py-2">
+        <button onclick="shareOrder()" class="flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-zinc-800 transition-colors py-2">
           <span class="material-symbols-outlined" style="font-size:18px">share</span>
-          Share Order
+          Share Confirmation
         </button>
       </div>
 
       <!-- Rating Prompt -->
-      <div class="bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl border border-primary/20 p-5 text-center">
-        <p class="font-bold text-sm text-on-surface mb-1">Enjoying ZyropFoodOrder?</p>
-        <p class="text-xs text-secondary mb-3">Rate your experience after delivery</p>
-        <div class="flex justify-center gap-1" id="star-rating">
-          <button onclick="rate(1)" class="star-btn text-2xl text-outline-variant hover:text-yellow-500 transition-colors">★</button>
-          <button onclick="rate(2)" class="star-btn text-2xl text-outline-variant hover:text-yellow-500 transition-colors">★</button>
-          <button onclick="rate(3)" class="star-btn text-2xl text-outline-variant hover:text-yellow-500 transition-colors">★</button>
-          <button onclick="rate(4)" class="star-btn text-2xl text-outline-variant hover:text-yellow-500 transition-colors">★</button>
-          <button onclick="rate(5)" class="star-btn text-2xl text-outline-variant hover:text-yellow-500 transition-colors">★</button>
+      <div class="bg-zinc-50 border border-zinc-200/60 rounded p-6 text-center">
+        <p class="font-bold text-sm text-zinc-800 uppercase tracking-wide">Enjoying Zesto?</p>
+        <p class="text-xs text-zinc-500 mt-1.5 leading-relaxed font-semibold">Rate your experience after delivery</p>
+        <div class="flex justify-center gap-3 mt-4" id="star-rating">
+          <button onclick="rate(1)" class="star-btn text-2xl text-zinc-400 hover:text-yellow-500 transition-colors">★</button>
+          <button onclick="rate(2)" class="star-btn text-2xl text-zinc-400 hover:text-yellow-500 transition-colors">★</button>
+          <button onclick="rate(3)" class="star-btn text-2xl text-zinc-400 hover:text-yellow-500 transition-colors">★</button>
+          <button onclick="rate(4)" class="star-btn text-2xl text-zinc-400 hover:text-yellow-500 transition-colors">★</button>
+          <button onclick="rate(5)" class="star-btn text-2xl text-zinc-400 hover:text-yellow-500 transition-colors">★</button>
         </div>
       </div>
 
@@ -314,16 +241,15 @@ $paymentMode = $order['payment_mode'] ?? 'cod';
 const TRACKING_STEPS = [
   { id:'placed',   icon:'receipt_long',     label:'Order Placed',         desc:'Restaurant has received your order', time: 0 },
   { id:'accepted', icon:'check_circle',     label:'Order Accepted',       desc:'The restaurant is preparing your food', time: 1500 },
-  { id:'cooking',  icon:'soup_kitchen',     label:'Being Prepared',       desc:'Your food is being freshly cooked 👨‍🍳', time: 4000 },
-  { id:'picked',   icon:'delivery_dining',  label:'Out for Delivery',     desc:'Rider is on the way to your location 🛵', time: 8000 },
-  { id:'arrived',  icon:'where_to_vote',    label:'Delivered',            desc:'Enjoy your meal! 🎉', time: 14000 },
+  { id:'cooking',  icon:'soup_kitchen',     label:'Being Prepared',       desc:'Your food is being freshly cooked', time: 4000 },
+  { id:'picked',   icon:'delivery_dining',  label:'Out for Delivery',     desc:'Rider is on the way to your location', time: 8000 },
+  { id:'arrived',  icon:'where_to_vote',    label:'Delivered',            desc:'Enjoy your meal', time: 14000 },
 ];
 
 let completedSteps = new Set(['placed']);
 let activeStep = 'accepted';
 
 document.addEventListener('DOMContentLoaded', () => {
-  launchConfetti();
   renderTracking();
   startTracking();
   setETA();
@@ -344,7 +270,7 @@ function renderTracking() {
       <div class="flex-1 pb-${isLast?'0':'2'}">
         <p class="font-bold text-sm ${done?'text-tertiary':active?'text-primary':'text-secondary'}">${step.label}</p>
         <p class="text-xs ${done||active?'text-secondary':'text-outline-variant'} mt-0.5">${step.desc}</p>
-        <p class="text-xs text-outline-variant mt-0.5" id="time-${step.id}">${done?'Completed':active?'In progress…':''}</p>
+        <p class="text-xs text-outline-variant mt-0.5 font-bold uppercase tracking-wider" id="time-${step.id}">${done?'Completed':active?'In progress…':''}</p>
       </div>
       ${active ? `<div class="flex-shrink-0 w-5 h-5 border-2 border-primary border-t-transparent rounded-full" style="animation:spin 0.8s linear infinite"></div>` : ''}
     </div>`;
@@ -367,9 +293,9 @@ function startTracking() {
         const timeEl = document.getElementById(`time-${step.id}`);
         if (timeEl) timeEl.textContent = timeStr;
         if (step.id === 'arrived') {
-          showToast('Your order has been delivered! 🎉', 'success', 5000);
+          showToast('Your order has been delivered!', 'success', 5000);
         } else {
-          showToast(step.label + ' 📍', 'info', 2000);
+          showToast(step.label, 'info', 2000);
         }
       }, step.time);
     }
@@ -383,33 +309,10 @@ function setETA() {
   document.getElementById('eta-time').textContent = `by ${eta.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' })}`;
 }
 
-/* ===== Confetti ===== */
-function launchConfetti() {
-  const colors = ['#a83300','#ffdbd0','#006b29','#69ff87','#ffc107','#e91e63'];
-  for (let i = 0; i < 60; i++) {
-    setTimeout(() => {
-      const el = document.createElement('div');
-      el.className = 'confetti-piece';
-      el.style.cssText = `
-        left: ${Math.random()*100}vw;
-        bottom: 0;
-        background: ${colors[Math.floor(Math.random()*colors.length)]};
-        width: ${6+Math.random()*8}px;
-        height: ${6+Math.random()*8}px;
-        border-radius: ${Math.random()>0.5?'50%':'2px'};
-        animation-duration: ${2+Math.random()*3}s;
-        animation-delay: 0s;
-      `;
-      document.body.appendChild(el);
-      setTimeout(() => el.remove(), 5000);
-    }, i * 40);
-  }
-}
-
 /* ===== Copy Order ID ===== */
 function copyOrderId() {
   const id = document.getElementById('order-id').textContent;
-  navigator.clipboard?.writeText(id).then(() => showToast('Order ID copied! 📋', 'success'));
+  navigator.clipboard?.writeText(id).then(() => showToast('Order ID copied!', 'success'));
 }
 
 /* ===== Star Rating ===== */
@@ -417,18 +320,17 @@ function rate(n) {
   document.querySelectorAll('.star-btn').forEach((btn, i) => {
     btn.style.color = i < n ? '#f59e0b' : '';
   });
-  showToast(`Thanks for rating us ${n} star${n>1?'s':''}! ⭐`, 'success');
+  showToast(`Thanks for rating us ${n} star${n>1?'s':''}!`, 'success');
 }
 
 /* ===== Share ===== */
 function shareOrder() {
   const id = document.getElementById('order-id').textContent;
   if (navigator.share) {
-    navigator.share({ title:'My ZyropFoodOrder', text:`I just ordered via ZyropFoodOrder! Order ID: ${id}`, url: location.href });
+    navigator.share({ title:'My Zesto', text:`I just ordered via Zesto! Order ID: ${id}`, url: location.href });
   } else {
     showToast('Sharing not supported on this device', 'error');
   }
 }
 </script>
-</body>
-</html>
+<?php include 'footer.php'; ?>

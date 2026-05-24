@@ -92,7 +92,7 @@ try {
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Database Diagnostics — ZyropFoodOrder</title>
+  <title>Database Diagnostics — Zesto</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -125,7 +125,7 @@ try {
       <div class="flex items-center gap-3">
         <span class="material-symbols-outlined text-4xl">database</span>
         <div>
-          <h1 class="text-2xl font-extrabold">Zyrop DB Setup</h1>
+          <h1 class="text-2xl font-extrabold">Zesto DB Setup</h1>
           <p class="text-white/80 text-sm mt-0.5">Database Diagnostic and Control Panel</p>
         </div>
       </div>

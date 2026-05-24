@@ -1,14 +1,41 @@
 /* =========================================================
-   ZyropFoodOrder — Shared Stylesheet
+   Zesto — Shared Stylesheet
    ========================================================= */
 
 /* ---------- Base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
 
 body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.liquid-glass {
+  background: rgba(0, 0, 0, 0.4);
+  background-blend-mode: luminosity;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: none;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+.liquid-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(180deg,
+    rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 20%,
+    rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%,
+    rgba(255,255,255,0.1) 80%, rgba(255,255,255,0.3) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 /* ---------- Scrollbar ---------- */
@@ -92,7 +119,7 @@ body {
 .cart-badge {
   position: absolute;
   top: -6px; right: -8px;
-  background: #a83300;
+  background: #8a4f35;
   color: #fff;
   font-size: 10px;
   font-weight: 700;
@@ -113,28 +140,28 @@ body {
   pointer-events: none;
 }
 .toast {
-  background: #1b1c1c;
+  background: #221f1d;
   color: #fff;
   padding: 12px 20px;
-  border-radius: 12px;
+  border-radius: 8px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   display: flex; align-items: center;
   gap: 10px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
   animation: slideInRight 0.3s ease both;
   pointer-events: all;
   max-width: 320px;
 }
-.toast.success { border-left: 4px solid #006b29; }
-.toast.error   { border-left: 4px solid #ba1a1a; }
-.toast.info    { border-left: 4px solid #a83300; }
+.toast.success { border-left: 3px solid #526043; }
+.toast.error   { border-left: 3px solid #ba1a1a; }
+.toast.info    { border-left: 3px solid #8a4f35; }
 .toast-icon { font-size: 20px; }
 .toast.hide { opacity: 0; transform: translateX(40px); transition: all 0.3s ease; }
 
 /* ---------- Skeleton Loader ---------- */
 .skeleton {
-  background: linear-gradient(90deg, #efeded 25%, #e4e2e2 50%, #efeded 75%);
+  background: linear-gradient(90deg, #f7f5f2 25%, #edeae6 50%, #f7f5f2 75%);
   background-size: 400% 100%;
   animation: shimmer 1.4s ease infinite;
   border-radius: 8px;
@@ -142,49 +169,51 @@ body {
 
 /* ---------- Food Card ---------- */
 .food-card {
-  border-radius: 20px;
+  border-radius: 12px;
   overflow: hidden;
-  transition: box-shadow 0.25s ease, transform 0.25s ease;
-  background: #fff;
-  border: 1px solid rgba(229,190,178,0.3);
+  transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+  background: #ffffff;
+  border: 1px solid #e8e5e0;
 }
 .food-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 40px rgba(168,51,0,0.12);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.03);
+  border-color: #8a4f35;
 }
 .food-card img {
   transition: transform 0.5s ease;
 }
 .food-card:hover img {
-  transform: scale(1.06);
+  transform: scale(1.04);
 }
 
 /* ---------- Quantity Stepper ---------- */
 .qty-stepper {
   display: flex; align-items: center; gap: 0;
-  border: 1.5px solid #e5beb2;
+  border: 1px solid #e8e5e0;
   border-radius: 9999px;
   overflow: hidden;
+  background: #ffffff;
 }
 .qty-btn {
   width: 32px; height: 32px;
   display: flex; align-items: center; justify-content: center;
   background: transparent;
   cursor: pointer;
-  font-weight: 700;
-  font-size: 18px;
-  color: #a83300;
-  transition: background 0.15s;
+  font-weight: 600;
+  font-size: 16px;
+  color: #8a4f35;
+  transition: background 0.15s, color 0.15s;
   border: none;
   outline: none;
 }
-.qty-btn:hover { background: #ffdbd0; }
+.qty-btn:hover { background: #fdfbf9; color: #733f28; }
 .qty-count {
   min-width: 32px;
   text-align: center;
-  font-size: 14px;
-  font-weight: 700;
-  color: #1b1c1c;
+  font-size: 13px;
+  font-weight: 600;
+  color: #221f1d;
 }
 
 /* ---------- Step Progress Bar ---------- */
@@ -200,34 +229,34 @@ body {
   content: '';
   position: absolute;
   top: 16px; left: 50%; right: -50%;
-  height: 2px;
-  background: #e5beb2;
+  height: 1px;
+  background: #e8e5e0;
   z-index: 0;
 }
-.step-item.done:not(:last-child)::after { background: #a83300; }
+.step-item.done:not(:last-child)::after { background: #526043; }
 .step-circle {
   width: 32px; height: 32px;
   border-radius: 9999px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 700;
-  background: #efeded;
-  color: #5c4037;
+  font-size: 12px; font-weight: 600;
+  background: #ffffff;
+  color: #736f6c;
   z-index: 1;
   transition: all 0.3s ease;
-  border: 2px solid #e5beb2;
+  border: 1px solid #e8e5e0;
 }
 .step-item.active .step-circle {
-  background: #a83300; color: #fff; border-color: #a83300;
+  background: #8a4f35; color: #fff; border-color: #8a4f35;
 }
 .step-item.done .step-circle {
-  background: #006b29; color: #fff; border-color: #006b29;
+  background: #526043; color: #fff; border-color: #526043;
 }
 .step-label {
-  font-size: 11px; font-weight: 600; color: #907065;
+  font-size: 11px; font-weight: 600; color: #736f6c;
   white-space: nowrap;
 }
-.step-item.active .step-label { color: #a83300; }
-.step-item.done .step-label   { color: #006b29; }
+.step-item.active .step-label { color: #8a4f35; }
+.step-item.done .step-label   { color: #526043; }
 
 /* ---------- Order Status Track ---------- */
 .track-step {
@@ -238,26 +267,26 @@ body {
   content: '';
   position: absolute;
   left: 15px; top: 32px;
-  width: 2px;
+  width: 1px;
   height: calc(100% + 8px);
-  background: #e5beb2;
+  background: #e8e5e0;
 }
-.track-step.done::before { background: #006b29; }
+.track-step.done::before { background: #526043; }
 .track-dot {
   width: 32px; height: 32px; flex-shrink: 0;
   border-radius: 9999px;
   display: flex; align-items: center; justify-content: center;
-  background: #efeded; border: 2px solid #e5beb2;
+  background: #ffffff; border: 1px solid #e8e5e0;
   z-index: 1;
 }
-.track-step.done .track-dot   { background: #006b29; border-color: #006b29; }
-.track-step.active .track-dot { background: #a83300; border-color: #a83300; animation: pulse-ring 1.5s ease infinite; }
+.track-step.done .track-dot   { background: #526043; border-color: #526043; color: #fff; }
+.track-step.active .track-dot { background: #8a4f35; border-color: #8a4f35; color: #fff; }
 
 /* ---------- Auth Tabs ---------- */
 .auth-tab-indicator {
   position: absolute; bottom: 0; left: 0;
-  height: 3px; border-radius: 9999px;
-  background: #a83300;
+  height: 2px; border-radius: 9999px;
+  background: #8a4f35;
   transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
 }
 
@@ -265,76 +294,88 @@ body {
 .form-input {
   width: 100%;
   padding: 12px 16px;
-  border: 1.5px solid #e5beb2;
-  border-radius: 12px;
-  font-size: 15px;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  color: #1b1c1c;
-  background: #fff;
+  border: 1px solid #e8e5e0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  color: #221f1d;
+  background: #ffffff;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 .form-input:focus {
-  border-color: #a83300;
-  box-shadow: 0 0 0 3px rgba(168,51,0,0.12);
+  border-color: #8a4f35;
+  box-shadow: 0 0 0 2px rgba(138,79,53,0.15);
 }
-.form-input::placeholder { color: #907065; }
+.form-input::placeholder { color: #a1a1aa; }
 .input-group { position: relative; }
 .input-icon {
   position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-  color: #907065; pointer-events: none;
+  color: #a1a1aa; pointer-events: none;
 }
 .input-icon + .form-input { padding-left: 44px; }
 .input-toggle {
   position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-  color: #907065; cursor: pointer; background: none; border: none; outline: none;
+  color: #a1a1aa; cursor: pointer; background: none; border: none; outline: none;
 }
 
 /* ---------- Primary Button ---------- */
 .btn-primary {
-  background: #a83300;
+  background: #8a4f35;
   color: #fff;
-  padding: 14px 32px;
-  border-radius: 9999px;
-  font-weight: 700;
-  font-size: 15px;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
   border: none; cursor: pointer;
   transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  box-shadow: 0 4px 16px rgba(168,51,0,0.25);
 }
-.btn-primary:hover  { background: #832600; box-shadow: 0 6px 20px rgba(168,51,0,0.35); }
-.btn-primary:active { transform: scale(0.97); }
+.btn-primary:hover  { background: #733f28; }
+.btn-primary:active { transform: scale(0.98); }
 
 /* ---------- Outline Button ---------- */
 .btn-outline {
   background: transparent;
-  color: #a83300;
+  color: #8a4f35;
   padding: 12px 28px;
-  border-radius: 9999px;
-  font-weight: 700;
+  border-radius: 8px;
+  font-weight: 600;
   font-size: 14px;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  border: 1.5px solid #a83300;
+  font-family: 'Inter', sans-serif;
+  border: 1px solid #e8e5e0;
   cursor: pointer;
   transition: all 0.2s;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
 }
-.btn-outline:hover  { background: #ffdbd0; }
-.btn-outline:active { transform: scale(0.97); }
+.btn-outline:hover  { background: #fdfbf9; border-color: #8a4f35; color: #733f28; }
+.btn-outline:active { transform: scale(0.98); }
 
 /* ---------- Payment Card ---------- */
 .payment-method-card {
-  border: 2px solid #e5beb2;
-  border-radius: 16px;
-  padding: 16px 20px;
+  border: 1px solid #e8e5e0;
+  border-radius: 8px;
+  padding: 14px 18px;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex; align-items: center; gap: 14px;
+  background: #ffffff;
+  color: #221f1d;
 }
-.payment-method-card:hover      { border-color: #a83300; background: #fff8f6; }
-.payment-method-card.selected   { border-color: #a83300; background: #ffdbd0; }
+.payment-method-card:hover      { border-color: #8a4f35; background: #fdfbf9; }
+.payment-method-card.selected   { border-color: #8a4f35; background: rgba(138,79,53,0.04); }
+
+.card-preview {
+  background: #2c2825;
+  border-radius: 12px;
+  padding: 24px;
+  color: #ffffff;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
 
 /* ---------- Checkmark SVG animation ---------- */
 .check-circle svg .check-path {
@@ -351,19 +392,19 @@ body {
 /* ---------- Location badge ---------- */
 .location-badge {
   display: inline-flex; align-items: center; gap: 6px;
-  background: #ffdbd0;
-  color: #832600;
-  font-size: 13px; font-weight: 600;
+  background: rgba(138,79,53,0.08);
+  color: #8a4f35;
+  font-size: 12px; font-weight: 600;
   padding: 6px 14px;
   border-radius: 9999px;
+  border: 1px solid rgba(138,79,53,0.15);
 }
 
 /* ---------- Glassmorphism card ---------- */
 .glass-card {
-  background: rgba(255,255,255,0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(229,190,178,0.4);
+  background: #ffffff;
+  border: 1px solid #e8e5e0;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.03);
 }
 
 /* ---------- Responsive nav drawer ---------- */

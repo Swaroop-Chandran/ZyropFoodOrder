@@ -1,5 +1,5 @@
 /* =========================================================
-   ZyropFoodOrder — Cart & App Logic (localStorage)
+   Zesto — Cart & App Logic (localStorage)
    ========================================================= */
 
 const ZyropCart = (() => {
@@ -135,65 +135,6 @@ window.addEventListener('zyrop:cart-updated', updateCartBadge);
 document.addEventListener('DOMContentLoaded', updateCartBadge);
 
 
-/* =========================================================
-   Geolocation Helper
-   ========================================================= */
-const ZyropLocation = {
-  STORAGE_KEY: 'zyrop_location',
-
-  save(data) {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
-  },
-
-  get() {
-    try { return JSON.parse(localStorage.getItem(this.STORAGE_KEY)); }
-    catch { return null; }
-  },
-
-  async detect(onSuccess, onError) {
-    if (!navigator.geolocation) {
-      onError('Geolocation not supported by your browser.');
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const { latitude: lat, longitude: lng } = pos.coords;
-        // Reverse geocode using nominatim (free, no key needed)
-        try {
-          const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
-            { headers: { 'Accept-Language': 'en' } }
-          );
-          const data = await res.json();
-          const addr = data.address;
-          const label = [
-            addr.road || addr.pedestrian || addr.neighbourhood,
-            addr.suburb || addr.city_district,
-            addr.city || addr.town || addr.village,
-            addr.state
-          ].filter(Boolean).join(', ');
-          const location = { lat, lng, label, full: data.display_name };
-          ZyropLocation.save(location);
-          onSuccess(location);
-        } catch {
-          const location = { lat, lng, label: `${lat.toFixed(4)}, ${lng.toFixed(4)}`, full: '' };
-          ZyropLocation.save(location);
-          onSuccess(location);
-        }
-      },
-      (err) => {
-        const msgs = {
-          1: 'Location permission denied.',
-          2: 'Location unavailable.',
-          3: 'Location request timed out.'
-        };
-        onError(msgs[err.code] || 'Could not get location.');
-      },
-      { timeout: 10000 }
-    );
-  }
-};
-
 
 /* =========================================================
    Mobile Nav Toggle
@@ -207,3 +148,4 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+

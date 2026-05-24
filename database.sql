@@ -1,4 +1,4 @@
--- ZyropFoodOrder Database Schema
+-- Zesto Database Schema
 
 CREATE DATABASE IF NOT EXISTS `zyrop_food_order` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `zyrop_food_order`;

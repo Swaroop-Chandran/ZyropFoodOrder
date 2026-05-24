@@ -1,236 +1,180 @@
 <?php
-session_start();
-// Redirect to login if user is not authenticated, preserving redirect location
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php?redirect=" . urlencode("cart.php"));
-    exit();
-}
+$pageTitle = 'Your Cart — Zesto';
+$pageDesc = 'Review your cart and proceed to checkout. Fast, fresh food delivery at your doorstep.';
+$pageTheme = 'light';
+include 'header.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Your Cart — ZyropFoodOrder</title>
-  <meta name="description" content="Review your cart and proceed to checkout. Fast, fresh food delivery at your doorstep."/>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/zyrop.css"/>
-  <script id="tailwind-config">
-    tailwind.config = {
-      darkMode:"class",
-      theme:{extend:{colors:{"surface-container-low":"#f5f3f3","surface-container-lowest":"#ffffff","surface-bright":"#fbf9f8","on-error":"#ffffff","on-primary":"#ffffff","outline":"#907065","surface-container-high":"#e9e8e7","on-tertiary":"#ffffff","surface-variant":"#e4e2e2","tertiary":"#006b29","surface-dim":"#dbdad9","on-secondary":"#ffffff","error":"#ba1a1a","surface":"#fbf9f8","primary-fixed":"#ffdbd0","primary-container":"#d24200","primary":"#a83300","error-container":"#ffdad6","on-surface-variant":"#5c4037","secondary":"#5f5e5e","tertiary-container":"#008735","inverse-surface":"#303031","on-background":"#1b1c1c","background":"#fbf9f8","outline-variant":"#e5beb2","inverse-on-surface":"#f2f0f0","surface-tint":"#ac3500","secondary-container":"#e5e2e1","surface-container":"#efeded","primary-fixed-dim":"#ffb59d","on-surface":"#1b1c1c","surface-container-highest":"#e4e2e2","inverse-primary":"#ffb59d"}}}
-    }
-  </script>
-</head>
-<body class="bg-surface text-on-surface min-h-screen">
-
-<!-- ===== HEADER ===== -->
-<header class="bg-surface border-b border-outline-variant/30 sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 h-16 flex items-center justify-between">
-    <div class="flex items-center gap-4">
-      <a href="index.php" class="flex items-center gap-1 text-secondary hover:text-primary transition-colors font-semibold text-sm">
-        <span class="material-symbols-outlined" style="font-size:20px">arrow_back</span>
-        Back to Menu
-      </a>
-      <div class="h-5 w-px bg-outline-variant hidden sm:block"></div>
-      <a href="index.php" class="font-extrabold text-xl text-primary hidden sm:block">ZyropFoodOrder</a>
-    </div>
-    <h1 class="font-extrabold text-lg text-on-surface">Your Cart</h1>
-    
-    <!-- Account Info Header Menu -->
-    <div class="flex items-center gap-2 border border-outline-variant/30 rounded-full px-3 py-1 bg-surface-container-low">
-      <span class="material-symbols-outlined text-primary" style="font-size:18px">account_circle</span>
-      <span class="text-xs font-bold text-on-surface truncate max-w-[100px]"><?php echo htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]); ?></span>
-      <a href="orders.php" class="text-xs font-bold text-secondary hover:text-primary transition-colors ml-1" title="My Orders">Orders</a>
-      <a href="logout.php" class="material-symbols-outlined text-secondary hover:text-error transition-colors" style="font-size:16px" title="Logout">logout</a>
-    </div>
-  </div>
-</header>
 
 <!-- ===== STEP PROGRESS ===== -->
-<div class="bg-surface-container-low border-b border-outline-variant/20">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-4">
-    <div class="step-bar max-w-sm mx-auto">
-      <div class="step-item active">
-        <div class="step-circle">1</div>
-        <span class="step-label">Cart</span>
+<div class="border-b border-zinc-200/60 bg-white relative z-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-6">
+    <div class="step-bar max-w-sm mx-auto flex items-center justify-between">
+      <div class="step-item active flex flex-col items-center">
+        <div class="step-circle font-bold">1</div>
+        <span class="step-label text-xs uppercase tracking-wider font-bold mt-1.5">Cart</span>
       </div>
-      <div class="step-item">
-        <div class="step-circle">2</div>
-        <span class="step-label">Payment</span>
+      <div class="step-item flex flex-col items-center">
+        <div class="step-circle font-bold">2</div>
+        <span class="step-label text-xs uppercase tracking-wider font-bold mt-1.5">Payment</span>
       </div>
-      <div class="step-item">
-        <div class="step-circle">3</div>
-        <span class="step-label">Confirm</span>
+      <div class="step-item flex flex-col items-center">
+        <div class="step-circle font-bold">3</div>
+        <span class="step-label text-xs uppercase tracking-wider font-bold mt-1.5">Confirm</span>
       </div>
     </div>
   </div>
 </div>
 
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-8">
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-12 relative z-10">
   <!-- ===== EMPTY STATE ===== -->
-  <div id="empty-cart" class="hidden flex-col items-center justify-center py-24 gap-5 text-center">
-    <div class="text-8xl">🛒</div>
-    <h2 class="text-2xl font-extrabold text-on-surface">Your cart is empty</h2>
-    <p class="text-secondary max-w-xs">Looks like you haven't added anything yet. Explore our menu and discover something delicious!</p>
-    <a href="index.php" class="btn-primary">
-      <span class="material-symbols-outlined" style="font-size:20px">restaurant_menu</span>
-      Browse Menu
+  <div id="empty-cart" class="hidden flex-col items-center justify-center py-24 gap-6 text-center animate-fade-in-up">
+    <span class="material-symbols-outlined text-zinc-300" style="font-size: 64px">shopping_bag</span>
+    <h2 class="font-title text-3xl font-extrabold text-zinc-900">Your cart is empty</h2>
+    <p class="text-zinc-500 text-sm max-w-xs leading-relaxed">Explore our curated culinary collection and find something extraordinary for your dining table.</p>
+    <a href="index.php" class="btn-primary mt-2 uppercase tracking-widest text-xs font-bold py-3.5 px-8">
+      Explore Menu
     </a>
   </div>
 
   <!-- ===== CART CONTENT ===== -->
-  <div id="cart-content" class="flex flex-col lg:flex-row gap-8">
+  <div id="cart-content" class="flex flex-col lg:flex-row gap-10">
 
     <!-- Left: Cart Items + Address -->
-    <div class="flex-1 flex flex-col gap-6">
+    <div class="flex-1 flex flex-col gap-8">
 
       <!-- Cart Items -->
-      <div class="bg-white rounded-2xl border border-outline-variant/30 overflow-hidden">
-        <div class="px-6 py-5 border-b border-outline-variant/20 flex items-center justify-between">
-          <h2 class="font-extrabold text-lg text-on-surface">Order Items</h2>
-          <button onclick="clearCart()" class="text-xs font-bold text-error hover:underline flex items-center gap-1">
+      <div class="zesto-glass-card rounded-lg border border-zinc-200/60 overflow-hidden bg-white">
+        <div class="px-8 py-6 border-b border-zinc-200/60 flex items-center justify-between">
+          <h2 class="font-title text-xl font-bold text-zinc-900">Order Items</h2>
+          <button onclick="clearCart()" class="text-xs font-bold uppercase tracking-wider text-error hover:underline flex items-center gap-1">
             <span class="material-symbols-outlined" style="font-size:16px">delete_sweep</span>
             Clear all
           </button>
         </div>
-        <div id="cart-items-list" class="divide-y divide-outline-variant/20">
+        <div id="cart-items-list" class="divide-y divide-zinc-200/60">
           <!-- Rendered by JS -->
         </div>
       </div>
 
       <!-- Delivery Address -->
-      <div class="bg-white rounded-2xl border border-outline-variant/30 p-6">
-        <h2 class="font-extrabold text-lg text-on-surface mb-4 flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary" style="font-size:22px">location_on</span>
+      <div class="zesto-glass-card rounded-lg border border-zinc-200/60 p-8 bg-white">
+        <h2 class="font-title text-xl font-bold text-zinc-900 mb-6 flex items-center gap-2">
           Delivery Address
         </h2>
-        <div id="address-detected" class="hidden">
-          <div class="flex items-start gap-4 p-4 bg-surface-container-low rounded-xl border border-outline-variant/30 mb-4">
-            <span class="material-symbols-outlined text-tertiary mt-0.5" style="font-size:22px">where_to_vote</span>
-            <div class="flex-1">
-              <p class="font-bold text-sm text-on-surface" id="address-line1">Fetching address…</p>
-              <p class="text-xs text-secondary mt-0.5" id="address-line2"></p>
-            </div>
-            <span class="text-xs font-bold text-tertiary bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">Home</span>
+        
+        <!-- Detected address state -->
+        <div id="address-detected" class="hidden flex items-start gap-3 bg-zinc-50 border border-zinc-200/80 rounded p-4 mb-6">
+          <span class="material-symbols-outlined text-primary mt-0.5" style="font-size:22px">where_to_vote</span>
+          <div class="flex-1 min-w-0">
+            <p class="font-bold text-sm text-zinc-800 animate-fade-in" id="address-line1"></p>
+            <p class="text-xs text-zinc-500 mt-0.5 animate-fade-in" id="address-line2"></p>
           </div>
-          <button onclick="changeAddress()" class="text-sm font-semibold text-primary hover:underline flex items-center gap-1">
-            <span class="material-symbols-outlined" style="font-size:16px">edit</span>
-            Change address
-          </button>
+          <button onclick="changeAddress()" class="text-xs font-bold uppercase tracking-wider text-primary hover:underline whitespace-nowrap ml-2">Change</button>
         </div>
-        <div id="address-manual" class="flex flex-col gap-3">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div class="flex flex-col gap-1">
-              <label class="text-xs font-semibold text-secondary">Flat / House No.</label>
-              <input id="addr-flat" type="text" class="form-input" placeholder="e.g. Flat 4B, Block A"/>
+
+        <!-- manual address input -->
+        <div id="address-manual" class="flex flex-col gap-5">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs uppercase tracking-wider font-bold text-zinc-500">Flat / House No.</label>
+              <input id="addr-flat" type="text" class="form-input bg-white border border-zinc-200 text-zinc-800 rounded px-4 py-3 focus:border-primary focus:ring-0" placeholder="e.g. Flat 4B, Block A"/>
             </div>
-            <div class="flex flex-col gap-1">
-              <label class="text-xs font-semibold text-secondary">Street / Area</label>
-              <input id="addr-street" type="text" class="form-input" placeholder="e.g. MG Road"/>
-            </div>
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div class="flex flex-col gap-1">
-              <label class="text-xs font-semibold text-secondary">City</label>
-              <input id="addr-city" type="text" class="form-input" placeholder="e.g. Bangalore"/>
-            </div>
-            <div class="flex flex-col gap-1">
-              <label class="text-xs font-semibold text-secondary">Pincode</label>
-              <input id="addr-pin" type="text" class="form-input" placeholder="e.g. 560001"/>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs uppercase tracking-wider font-bold text-zinc-500">Street / Area</label>
+              <input id="addr-street" type="text" class="form-input bg-white border border-zinc-200 text-zinc-800 rounded px-4 py-3 focus:border-primary focus:ring-0" placeholder="e.g. MG Road"/>
             </div>
           </div>
-          <button onclick="detectLocationForCart()" class="flex items-center gap-2 text-primary font-semibold text-sm border border-primary/30 bg-primary/5 rounded-xl px-4 py-2.5 hover:bg-primary/10 transition-colors w-fit">
-            <span class="material-symbols-outlined" style="font-size:18px">my_location</span>
-            Detect my location
-          </button>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs uppercase tracking-wider font-bold text-zinc-500">City</label>
+              <input id="addr-city" type="text" class="form-input bg-white border border-zinc-200 text-zinc-800 rounded px-4 py-3 focus:border-primary focus:ring-0" placeholder="e.g. Bangalore"/>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs uppercase tracking-wider font-bold text-zinc-500">Pincode</label>
+              <input id="addr-pin" type="text" class="form-input bg-white border border-zinc-200 text-zinc-800 rounded px-4 py-3 focus:border-primary focus:ring-0" placeholder="e.g. 560001"/>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Promo Code -->
-      <div class="bg-white rounded-2xl border border-outline-variant/30 p-6">
-        <h2 class="font-extrabold text-base text-on-surface mb-4 flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary" style="font-size:20px">local_offer</span>
-          Promo Code
+      <div class="zesto-glass-card rounded-lg border border-zinc-200/60 p-8 bg-white">
+        <h2 class="font-title text-lg font-bold text-zinc-900 mb-4 flex items-center gap-2">
+          Offer Code
         </h2>
         <div class="flex gap-3">
-          <input id="promo-input" type="text" class="form-input flex-1" placeholder="Enter promo code (try ZYROP50)"/>
-          <button onclick="applyPromo()" class="btn-outline whitespace-nowrap" style="padding:12px 20px;font-size:13px">Apply</button>
+          <input id="promo-input" type="text" class="form-input bg-white border border-zinc-200 text-zinc-800 rounded px-4 py-3 focus:border-primary focus:ring-0 w-full" placeholder="Enter promo code (e.g. ZYROP50)"/>
+          <button onclick="applyPromo()" class="btn-primary whitespace-nowrap uppercase tracking-widest text-xs font-bold py-3 px-6 rounded">Apply</button>
         </div>
-        <p id="promo-msg" class="text-xs mt-2 hidden"></p>
+        <p id="promo-msg" class="text-xs mt-3 hidden font-bold"></p>
       </div>
 
     </div>
 
     <!-- Right: Order Summary -->
     <div class="lg:w-[360px] xl:w-[400px] flex-shrink-0">
-      <div class="bg-white rounded-2xl border border-outline-variant/30 p-6 sticky top-24">
-        <h2 class="font-extrabold text-lg text-on-surface mb-5">Order Summary</h2>
+      <div class="zesto-glass-card rounded-lg border border-zinc-200/60 p-8 bg-white sticky top-24 shadow-sm">
+        <h2 class="font-title text-xl font-bold text-zinc-900 mb-6">Order Summary</h2>
 
-        <div class="flex flex-col gap-3 text-sm mb-5">
+        <div class="flex flex-col gap-3.5 text-xs font-bold uppercase tracking-wider text-zinc-500 mb-6">
           <div class="flex justify-between">
-            <span class="text-secondary">Subtotal (<span id="sum-count">0</span> items)</span>
-            <span class="font-semibold" id="sum-subtotal">₹0</span>
+            <span>Subtotal (<span id="sum-count">0</span> items)</span>
+            <span class="font-extrabold text-zinc-900" id="sum-subtotal">₹0</span>
           </div>
           <div class="flex justify-between">
-            <span class="text-secondary">Delivery fee</span>
-            <span class="font-semibold" id="sum-delivery">₹49</span>
+            <span>Delivery fee</span>
+            <span class="font-extrabold text-zinc-900" id="sum-delivery">₹49</span>
           </div>
           <div class="flex justify-between">
-            <span class="text-secondary">Platform fee</span>
-            <span class="font-semibold">₹5</span>
+            <span>Platform fee</span>
+            <span class="font-extrabold text-zinc-900">₹5</span>
           </div>
           <div class="flex justify-between text-tertiary" id="discount-row" style="display:none!important">
-            <span class="font-semibold flex items-center gap-1">
-              <span class="material-symbols-outlined" style="font-size:16px">confirmation_number</span>
+            <span class="flex items-center gap-1">
               Promo discount
             </span>
-            <span class="font-bold" id="sum-discount">-₹0</span>
+            <span class="font-extrabold" id="sum-discount">-₹0</span>
           </div>
           <div class="flex justify-between">
-            <span class="text-secondary">GST (5%)</span>
-            <span class="font-semibold" id="sum-gst">₹0</span>
+            <span>GST (5%)</span>
+            <span class="font-extrabold text-zinc-900" id="sum-gst">₹0</span>
           </div>
         </div>
 
-        <div class="border-t border-outline-variant/30 pt-4 mb-6">
+        <div class="border-t border-zinc-200/60 pt-5 mb-8">
           <div class="flex justify-between items-center">
-            <span class="font-extrabold text-lg">Total</span>
-            <span class="font-extrabold text-xl text-primary" id="sum-total">₹0</span>
+            <span class="font-title text-lg font-bold text-zinc-900">Total</span>
+            <span class="font-title text-2xl font-extrabold text-primary" id="sum-total">₹0</span>
           </div>
-          <p class="text-xs text-secondary mt-1">Inclusive of all taxes</p>
+          <p class="text-[9px] uppercase tracking-wider font-bold text-zinc-400 mt-1.5">Inclusive of all food taxes</p>
         </div>
 
-        <div class="flex flex-col gap-3">
-          <div class="flex items-center gap-3 text-sm text-secondary bg-surface-container-low rounded-xl p-3">
-            <span class="material-symbols-outlined text-tertiary" style="font-size:20px">timer</span>
-            <span>Estimated delivery: <strong class="text-on-surface">30–45 mins</strong></span>
+        <div class="flex flex-col gap-4">
+          <div class="flex items-center gap-3 text-xs text-zinc-500 bg-[#fdfbf9] border border-zinc-200/80 rounded p-4 font-bold uppercase tracking-wider">
+            <span class="material-symbols-outlined text-primary" style="font-size:18px">schedule</span>
+            <span>Est. Delivery: <strong class="text-zinc-800 font-extrabold">30–45 Mins</strong></span>
           </div>
-          <button onclick="proceedToCheckout()" id="checkout-btn" class="btn-primary w-full text-base">
-            <span class="material-symbols-outlined" style="font-size:20px">payments</span>
+          <button onclick="proceedToCheckout()" id="checkout-btn" class="btn-primary w-full uppercase tracking-widest text-xs font-bold py-3.5">
             Proceed to Payment
           </button>
-          <a href="index.php" class="btn-outline w-full text-center text-sm">
-            <span class="material-symbols-outlined" style="font-size:18px">add_circle</span>
-            Add more items
+          <a href="index.php" class="btn-outline w-full text-center uppercase tracking-widest text-xs font-bold py-3.5 rounded flex items-center justify-center gap-1.5">
+            Add More Items
           </a>
         </div>
 
         <!-- Trust badges -->
-        <div class="mt-6 pt-5 border-t border-outline-variant/20 flex items-center justify-around text-center">
+        <div class="mt-8 pt-6 border-t border-zinc-200/60 flex items-center justify-around text-center">
           <div class="flex flex-col items-center gap-1">
-            <span class="material-symbols-outlined text-tertiary" style="font-size:24px">verified_user</span>
-            <span class="text-xs text-secondary font-medium">Secure</span>
+            <span class="material-symbols-outlined text-[#526043]" style="font-size:22px">verified_user</span>
+            <span class="text-[9px] uppercase tracking-wider text-zinc-400 font-bold">100% Secure</span>
           </div>
           <div class="flex flex-col items-center gap-1">
-            <span class="material-symbols-outlined text-tertiary" style="font-size:24px">local_shipping</span>
-            <span class="text-xs text-secondary font-medium">Fast Delivery</span>
+            <span class="material-symbols-outlined text-[#526043]" style="font-size:22px">local_shipping</span>
+            <span class="text-[9px] uppercase tracking-wider text-zinc-400 font-bold">Fast Delivery</span>
           </div>
           <div class="flex flex-col items-center gap-1">
-            <span class="material-symbols-outlined text-tertiary" style="font-size:24px">star</span>
-            <span class="text-xs text-secondary font-medium">Top Rated</span>
+            <span class="material-symbols-outlined text-[#526043]" style="font-size:22px">star</span>
+            <span class="text-[9px] uppercase tracking-wider text-zinc-400 font-bold">Top Rated</span>
           </div>
         </div>
       </div>
@@ -271,29 +215,29 @@ function renderCart() {
   content.classList.remove('hidden');
 
   document.getElementById('cart-items-list').innerHTML = cart.map(item => `
-    <div class="flex gap-4 p-5 hover:bg-surface-container-low/50 transition-colors animate-fade-in" id="cart-row-${item.id}">
-      <img src="${item.image}" alt="${item.name}" class="w-20 h-20 rounded-xl object-cover flex-shrink-0"
+    <div class="flex gap-5 p-6 hover:bg-zinc-50/50 transition-colors animate-fade-in" id="cart-row-${item.id}">
+      <img src="${item.image}" alt="${item.name}" class="w-20 h-20 rounded object-cover flex-shrink-0 border border-zinc-200/60"
            onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&q=80'"/>
       <div class="flex-1 min-w-0">
         <div class="flex items-start justify-between gap-2">
           <div>
-            <div class="flex items-center gap-1.5">
-              <span class="w-4 h-4 rounded border-2 flex items-center justify-center text-[9px] font-bold ${item.veg ? 'border-green-600 text-green-600' : 'border-red-600 text-red-600'}">●</span>
-              <h3 class="font-bold text-sm text-on-surface leading-snug truncate max-w-[160px]">${item.name}</h3>
+            <div class="flex items-center gap-2">
+              <span class="w-4 h-4 rounded border flex items-center justify-center text-[9px] font-extrabold ${item.veg ? 'border-green-600 text-green-600' : 'border-red-600 text-red-600'}">●</span>
+              <h3 class="font-title font-bold text-base text-zinc-900 leading-snug truncate max-w-[200px]">${item.name}</h3>
             </div>
-            <p class="text-xs text-secondary mt-0.5">${item.restaurant}</p>
+            <p class="text-[10px] uppercase tracking-wider font-bold text-zinc-400 mt-1">${item.restaurant}</p>
           </div>
-          <button onclick="removeItem('${item.id}')" class="text-secondary hover:text-error transition-colors flex-shrink-0">
+          <button onclick="removeItem('${item.id}')" class="text-zinc-400 hover:text-error transition-colors flex-shrink-0">
             <span class="material-symbols-outlined" style="font-size:18px">close</span>
           </button>
         </div>
-        <div class="flex items-center justify-between mt-3">
+        <div class="flex items-center justify-between mt-4">
           <div class="qty-stepper">
             <button class="qty-btn" onclick="cartQty('${item.id}',-1)">−</button>
             <span class="qty-count" id="cart-qty-${item.id}">${item.qty}</span>
             <button class="qty-btn" onclick="cartQty('${item.id}',1)">+</button>
           </div>
-          <span class="font-extrabold text-sm text-on-surface">₹${item.price * item.qty}</span>
+          <span class="font-extrabold text-sm text-zinc-900">₹${item.price * item.qty}</span>
         </div>
       </div>
     </div>
@@ -308,7 +252,6 @@ function cartQty(id, delta) {
   renderCart();
 }
 
-// Ensure local item badge increments correctly
 function updateCartBadge() {
   const badges = document.querySelectorAll('.cart-count-badge');
   const count = ZyropCart.getTotalCount();
@@ -344,7 +287,7 @@ function updateSummary() {
 
   document.getElementById('sum-count').textContent = count;
   document.getElementById('sum-subtotal').textContent = `₹${subtotal}`;
-  document.getElementById('sum-delivery').textContent = freeDelivery ? `₹0 🎉` : `₹${delivery}`;
+  document.getElementById('sum-delivery').textContent = freeDelivery ? `₹0` : `₹${delivery}`;
   document.getElementById('sum-gst').textContent = `₹${gst}`;
   document.getElementById('sum-total').textContent = `₹${Math.max(0,total)}`;
 
@@ -363,14 +306,14 @@ function applyPromo() {
   const msg = document.getElementById('promo-msg');
   if (PROMO_CODES[code]) {
     appliedDiscount = PROMO_CODES[code];
-    msg.className = 'text-xs mt-2 text-tertiary font-semibold';
-    msg.textContent = `🎉 Promo applied! You save ₹${appliedDiscount}`;
+    msg.className = 'text-xs mt-3 text-tertiary font-bold';
+    msg.textContent = `Promo applied! You save ₹${appliedDiscount}`;
     msg.classList.remove('hidden');
     updateSummary();
-    showToast(`Promo code applied! ₹${appliedDiscount} off 🎉`, 'success');
+    showToast(`Promo code applied! ₹${appliedDiscount} off`, 'success');
   } else {
     appliedDiscount = 0;
-    msg.className = 'text-xs mt-2 text-error font-semibold';
+    msg.className = 'text-xs mt-3 text-error font-bold';
     msg.textContent = 'Invalid promo code. Try ZYROP50';
     msg.classList.remove('hidden');
     updateSummary();
@@ -379,10 +322,10 @@ function applyPromo() {
 
 /* ===== Address ===== */
 function loadAddress() {
-  const loc = ZyropLocation.get();
+  const loc = JSON.parse(localStorage.getItem('zyrop_delivery_address') || 'null');
   const detected = document.getElementById('address-detected');
   const manual = document.getElementById('address-manual');
-  if (loc && loc.label) {
+  if (loc && loc.label && detected && manual) {
     const parts = loc.label.split(',');
     document.getElementById('address-line1').textContent = parts.slice(0,2).join(',').trim();
     document.getElementById('address-line2').textContent = parts.slice(2).join(',').trim();
@@ -392,20 +335,12 @@ function loadAddress() {
 }
 
 function changeAddress() {
-  document.getElementById('address-detected').classList.add('hidden');
-  document.getElementById('address-manual').classList.remove('hidden');
-}
-
-function detectLocationForCart() {
-  showToast('Detecting location…', 'info');
-  ZyropLocation.detect(
-    (loc) => {
-      ZyropLocation.save(loc);
-      loadAddress();
-      showToast('Location updated! 📍', 'success');
-    },
-    (err) => showToast(err, 'error')
-  );
+  const detected = document.getElementById('address-detected');
+  const manual = document.getElementById('address-manual');
+  if (detected && manual) {
+    detected.classList.add('hidden');
+    manual.classList.remove('hidden');
+  }
 }
 
 /* ===== Checkout ===== */
@@ -414,7 +349,8 @@ function proceedToCheckout() {
   if (cart.length === 0) { showToast('Your cart is empty!', 'error'); return; }
 
   // Save address from manual inputs if shown
-  const manualVisible = !document.getElementById('address-manual').classList.contains('hidden');
+  const manual = document.getElementById('address-manual');
+  const manualVisible = manual && !manual.classList.contains('hidden');
   if (manualVisible) {
     const flat = document.getElementById('addr-flat').value;
     const street = document.getElementById('addr-street').value;
@@ -425,7 +361,7 @@ function proceedToCheckout() {
       return;
     }
     const label = [flat, street, city, pin].filter(Boolean).join(', ');
-    ZyropLocation.save({ label, full: label });
+    localStorage.setItem('zyrop_delivery_address', JSON.stringify({ label, full: label }));
   }
 
   // Save order metadata
@@ -442,5 +378,4 @@ function proceedToCheckout() {
   setTimeout(() => { window.location.href = 'checkout.php'; }, 600);
 }
 </script>
-</body>
-</html>
+<?php include 'footer.php'; ?>

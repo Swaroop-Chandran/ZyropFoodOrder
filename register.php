@@ -7,10 +7,9 @@ if (isset($_SESSION['user_id'])) {
     header("Location: " . $redirect);
     exit();
 }
-?>
-<?php
-$pageTitle = 'Login & Sign Up — Zesto';
-$pageDesc = 'Login or create your Zesto account to order delicious food delivered to your doorstep.';
+
+$pageTitle = 'Sign Up — Zesto';
+$pageDesc = 'Create a free Zesto account and start ordering delicious meals today!';
 include 'header.php';
 ?>
 
@@ -20,18 +19,18 @@ include 'header.php';
     <!-- Tab Switcher -->
     <div class="relative flex border-b border-zinc-200/50 mb-8">
       <button id="tab-login" onclick="switchTab('login')"
-        class="flex-1 pb-4 text-xs uppercase tracking-wider font-bold text-primary relative tab-btn">
+        class="flex-1 pb-4 text-xs uppercase tracking-wider font-bold text-zinc-400 relative tab-btn">
         Login
       </button>
       <button id="tab-signup" onclick="switchTab('signup')"
-        class="flex-1 pb-4 text-xs uppercase tracking-wider font-bold text-zinc-400 relative tab-btn">
+        class="flex-1 pb-4 text-xs uppercase tracking-wider font-bold text-primary relative tab-btn">
         Sign Up
       </button>
-      <div id="tab-indicator" class="auth-tab-indicator w-1/2 bg-primary"></div>
+      <div id="tab-indicator" class="auth-tab-indicator w-1/2 bg-primary" style="left: 50%;"></div>
     </div>
 
     <!-- ===== LOGIN FORM ===== -->
-    <div id="form-login" class="animate-fade-in-up">
+    <div id="form-login" class="hidden animate-fade-in-up">
       <h2 class="font-title text-3xl font-extrabold text-zinc-900 mb-2">Welcome Back</h2>
       <p class="text-zinc-500 text-xs uppercase tracking-wider font-medium mb-8">Login to continue ordering your favorites.</p>
 
@@ -98,7 +97,7 @@ include 'header.php';
     </div>
 
     <!-- ===== SIGNUP FORM ===== -->
-    <div id="form-signup" class="hidden animate-fade-in-up">
+    <div id="form-signup" class="animate-fade-in-up">
       <h2 class="font-title text-3xl font-extrabold text-zinc-900 mb-2">Create Account</h2>
       <p class="text-zinc-500 text-xs uppercase tracking-wider font-medium mb-8">Join Zesto and start ordering today!</p>
 
@@ -159,6 +158,7 @@ include 'header.php';
 
   </div>
 </main>
+
 <script>
   /* ---------- Tab Switcher ---------- */
   function switchTab(tab) {
@@ -324,9 +324,7 @@ include 'header.php';
     });
   }
 
-  /* ---------- Auto-detect check from URL ---------- */
-  const params = new URLSearchParams(location.search);
-  if (params.get('tab') === 'signup') switchTab('signup');
+  // Force active signup tab for register.php
+  switchTab('signup');
 </script>
 <?php include 'footer.php'; ?>
-

@@ -1,126 +1,76 @@
 <?php
-session_start();
+$pageTitle = 'Zesto — Delicious Food Delivered Fast';
+$pageDesc = 'Browse delicious food items from top restaurants near you. Fast delivery at your doorstep.';
+include 'header.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ZyropFoodOrder — Order Food Online</title>
-  <meta name="description" content="Browse delicious food items from top restaurants near you. Order biryani, curry, dosa, pizza and more. Fast delivery at your doorstep."/>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/zyrop.css"/>
-  <script id="tailwind-config">
-    tailwind.config = {
-      darkMode:"class",
-      theme:{extend:{colors:{
-        "surface-container-low":"#f5f3f3","on-primary-container":"#fffbff","surface-container-lowest":"#ffffff",
-        "surface-bright":"#fbf9f8","on-error":"#ffffff","on-primary":"#ffffff","outline":"#907065",
-        "surface-container-high":"#e9e8e7","on-tertiary":"#ffffff","surface-variant":"#e4e2e2",
-        "tertiary":"#006b29","surface-dim":"#dbdad9","on-secondary":"#ffffff","error":"#ba1a1a",
-        "surface":"#fbf9f8","primary-fixed":"#ffdbd0","primary-container":"#d24200","primary":"#a83300",
-        "error-container":"#ffdad6","on-surface-variant":"#5c4037","secondary":"#5f5e5e",
-        "tertiary-container":"#008735","inverse-surface":"#303031","on-background":"#1b1c1c",
-        "background":"#fbf9f8","outline-variant":"#e5beb2","inverse-on-surface":"#f2f0f0",
-        "surface-tint":"#ac3500","secondary-container":"#e5e2e1","surface-container":"#efeded",
-        "primary-fixed-dim":"#ffb59d","on-surface":"#1b1c1c","surface-container-highest":"#e4e2e2",
-        "inverse-primary":"#ffb59d"
-      }}}
-    }
-  </script>
-</head>
-<body class="bg-surface text-on-surface">
 
-<!-- ===== HEADER ===== -->
-<header class="bg-surface border-b border-outline-variant/30 sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-between gap-4 py-4">
-
-    <!-- Logo -->
-    <a href="index.php" class="font-extrabold text-xl text-primary whitespace-nowrap flex-shrink-0">
-      ZyropFoodOrder
-    </a>
-
-    <!-- Search bar (desktop) -->
-    <div class="flex-1 max-w-lg hidden sm:flex items-center bg-surface-container rounded-full px-4 py-2.5 gap-2 border border-outline-variant/40">
-      <span class="material-symbols-outlined text-secondary" style="font-size:20px">search</span>
-      <input id="menu-search" type="text" placeholder="Search dishes, restaurants…"
-        class="bg-transparent border-none outline-none text-sm w-full font-medium placeholder:text-secondary"
-        oninput="filterItems()"/>
-    </div>
-
-    <!-- Right actions -->
-    <div class="flex items-center gap-3">
-
-      <!-- Location pill -->
-      <div id="header-location" onclick="changeHeaderLocation()" class="hidden lg:flex items-center gap-1.5 bg-surface-container rounded-full px-3 py-1.5 cursor-pointer hover:bg-surface-container-high transition-colors">
-        <span class="material-symbols-outlined text-primary" style="font-size:16px">location_on</span>
-        <span id="header-loc-text" class="text-xs font-semibold text-on-surface max-w-[120px] truncate">Detecting…</span>
-        <span class="material-symbols-outlined text-secondary" style="font-size:14px">keyboard_arrow_down</span>
+<!-- ===== HERO ===== -->
+<section class="relative min-h-[80vh] flex flex-col justify-center px-6 md:px-12 lg:px-16 py-12 bg-[#fdfbf9]">
+  <div class="max-w-7xl mx-auto w-full">
+    <div class="lg:grid lg:grid-cols-12 lg:items-center gap-12">
+      <div class="lg:col-span-7 animate-fade-in-up">
+        <span class="text-[10px] uppercase tracking-[0.22em] font-extrabold text-primary block mb-4">Curated dishes from your favorite kitchens.</span>
+        <h1 class="animated-heading text-5xl md:text-6xl lg:text-7xl font-extrabold font-title mb-6 leading-[1.05]" style="letter-spacing:-0.03em" data-text="Fresh meals,&#10;delivered with care." data-char-delay="35" data-initial-delay="100" data-duration="500"></h1>
+        <p class="fade-in opacity-0 text-zinc-650 text-base md:text-lg mb-8 max-w-lg leading-relaxed" data-delay="700" data-duration="1000">
+          Experience our new seasonal menus, where timeless culinary heritage meets contemporary local flavors. Prepared by master artisans.
+        </p>
+        <div class="fade-in opacity-0 flex flex-wrap gap-4" data-delay="1000" data-duration="1000">
+          <a href="#menu" class="bg-primary text-white hover:bg-primary-container px-8 py-3 rounded text-xs uppercase tracking-wider font-semibold transition-all shadow-sm active:scale-95 flex items-center">
+            Order Now
+          </a>
+        </div>
       </div>
-
-      <!-- Cart button -->
-      <a href="cart.php" class="relative flex items-center gap-2 bg-primary text-on-primary rounded-full px-5 py-2 text-sm font-bold hover:bg-primary-container transition-colors">
-        <span class="material-symbols-outlined" style="font-size:18px">shopping_cart</span>
-        <span class="hidden sm:inline">Cart</span>
-        <span class="cart-count-badge" style="display:none; position:absolute; top:-8px; right:-6px; background:#1b1c1c; color:#fff; font-size:10px; font-weight:700; min-width:18px; height:18px; border-radius:9999px; align-items:center; justify-content:center; padding:0 4px;">0</span>
-      </a>
-
-      <!-- Account Info Header Menu -->
-      <?php if (isset($_SESSION['user_id'])): ?>
-      <div class="flex items-center gap-2 border border-outline-variant/30 rounded-full px-3 py-1 bg-surface-container-low">
-        <span class="material-symbols-outlined text-primary" style="font-size:18px">account_circle</span>
-        <span class="text-xs font-bold text-on-surface truncate max-w-[100px]"><?php echo htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]); ?></span>
-        <a href="orders.php" class="text-xs font-bold text-secondary hover:text-primary transition-colors ml-1" title="My Orders">Orders</a>
-        <a href="logout.php" class="material-symbols-outlined text-secondary hover:text-error transition-colors" style="font-size:16px" title="Logout">logout</a>
+      
+      <div class="lg:col-span-5 fade-in opacity-0 mt-12 lg:mt-0" data-delay="1200" data-duration="1000">
+        <div class="relative rounded overflow-hidden shadow-sm border border-zinc-200/60" style="height: 440px;">
+          <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=600&auto=format&fit=crop" 
+               alt="Gourmet Table" 
+               class="w-full h-full object-cover" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/35 to-transparent"></div>
+          <div class="absolute bottom-6 left-6 text-white">
+            <p class="text-[9px] uppercase tracking-widest font-bold opacity-85">Featured Selection</p>
+            <h4 class="font-title text-xl font-bold mt-1">Culinary Tastings</h4>
+          </div>
+        </div>
       </div>
-      <?php else: ?>
-      <a href="login.php" class="flex items-center gap-1.5 border border-outline-variant/30 rounded-full px-4 py-2 bg-surface-container-low text-xs font-bold text-on-surface hover:bg-surface-container-high transition-colors">
-        <span class="material-symbols-outlined text-primary" style="font-size:18px">login</span>
-        Login / Register
-      </a>
-      <?php endif; ?>
     </div>
   </div>
+</section>
 
-  <!-- Mobile search -->
-  <div class="sm:hidden px-4 pb-3">
-    <div class="flex items-center bg-surface-container rounded-full px-4 py-2.5 gap-2 border border-outline-variant/40">
-      <span class="material-symbols-outlined text-secondary" style="font-size:20px">search</span>
-      <input id="menu-search-mobile" type="text" placeholder="Search dishes…"
-        class="bg-transparent border-none outline-none text-sm w-full font-medium placeholder:text-secondary"
-        oninput="filterItems()"/>
-    </div>
-  </div>
-</header>
+<div id="menu" class="bg-transparent text-zinc-800 relative">
 
 <!-- ===== CATEGORY FILTER BAR ===== -->
-<div class="sticky top-[69px] sm:top-[73px] z-40 bg-surface border-b border-outline-variant/20">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
-    <div id="category-bar" class="flex gap-2 overflow-x-auto hide-scrollbar py-3">
+<div class="sticky top-0 z-40 zesto-glass border-b border-zinc-200/40">
+  <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-16">
+    <div id="category-bar" class="flex gap-4 overflow-x-auto hide-scrollbar py-4 justify-start">
       <!-- generated by JS -->
     </div>
   </div>
 </div>
 
 <!-- ===== FILTER / SORT BAR ===== -->
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-5 flex items-center justify-between gap-4 flex-wrap">
-  <div class="flex items-center gap-2 flex-wrap">
-    <span class="text-sm text-secondary font-medium" id="results-count">Loading…</span>
+<div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 py-8 flex items-center justify-between gap-6 flex-wrap">
+  <div class="flex items-center gap-4 flex-wrap">
+    <span class="text-xs text-zinc-500 font-semibold uppercase tracking-wider" id="results-count">Loading…</span>
+    <div class="flex items-center bg-white rounded border border-zinc-200 px-4 py-2 gap-2 focus-within:border-primary transition-all">
+      <span class="material-symbols-outlined text-zinc-400" style="font-size:18px">search</span>
+      <input id="menu-search" type="text" placeholder="Search dishes, restaurants..."
+        class="bg-transparent border-none outline-none text-xs w-48 font-medium text-zinc-800 placeholder:text-zinc-400 focus:ring-0 focus:outline-none p-0"
+        oninput="filterItems()"/>
+    </div>
     <div class="flex gap-2">
       <button onclick="setDietFilter('all')" id="diet-all"
-        class="diet-btn active px-3 py-1 rounded-full text-xs font-bold border border-outline-variant transition-all bg-primary text-on-primary">All</button>
+        class="diet-btn active px-4 py-1.5 rounded text-xs uppercase tracking-wider font-semibold border border-zinc-200 transition-all bg-primary text-white">All</button>
       <button onclick="setDietFilter('veg')" id="diet-veg"
-        class="diet-btn px-3 py-1 rounded-full text-xs font-bold border border-outline-variant transition-all hover:bg-surface-container">🌿 Veg</button>
+        class="diet-btn px-4 py-1.5 rounded text-xs uppercase tracking-wider font-semibold border border-zinc-200 transition-all text-zinc-700 hover:bg-black/5 bg-white">Veg</button>
       <button onclick="setDietFilter('nonveg')" id="diet-nonveg"
-        class="diet-btn px-3 py-1 rounded-full text-xs font-bold border border-outline-variant transition-all hover:bg-surface-container">🍗 Non-Veg</button>
+        class="diet-btn px-4 py-1.5 rounded text-xs uppercase tracking-wider font-semibold border border-zinc-200 transition-all text-zinc-700 hover:bg-black/5 bg-white">Non-Veg</button>
     </div>
   </div>
   <div class="flex items-center gap-2">
-    <label class="text-xs font-semibold text-secondary">Sort:</label>
+    <label class="text-xs font-bold uppercase tracking-wider text-zinc-500">Sort:</label>
     <select onchange="setSortOrder(this.value)"
-      class="text-xs font-semibold text-on-surface border border-outline-variant rounded-full px-3 py-1.5 bg-surface outline-none cursor-pointer">
+      class="text-xs font-semibold text-zinc-800 border border-zinc-200 rounded px-4 py-2 bg-white outline-none cursor-pointer focus:border-primary">
       <option value="popular">Popular</option>
       <option value="price-asc">Price ↑</option>
       <option value="price-desc">Price ↓</option>
@@ -130,41 +80,127 @@ session_start();
 </div>
 
 <!-- ===== FOOD GRID ===== -->
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pb-28">
+<main class="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 pb-28">
   <div id="food-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
     <!-- Food cards rendered by JS -->
   </div>
-  <div id="empty-state" class="hidden flex-col items-center justify-center py-24 gap-4 text-center">
-    <div class="text-6xl">🍽️</div>
-    <h3 class="text-xl font-bold text-on-surface">No items found</h3>
-    <p class="text-secondary text-sm">Try a different category or search term.</p>
-    <button onclick="resetFilters()" class="btn-primary mt-2">Show all items</button>
+  <div id="empty-state" class="hidden flex-col items-center justify-center py-24 gap-2 text-center">
+    <h3 class="font-title text-2xl font-extrabold text-zinc-800">No items found</h3>
+    <p class="text-zinc-500 text-sm max-w-xs">Try searching a different keyword or resetting your category filter.</p>
+    <button onclick="resetFilters()" class="btn-outline mt-4">Show all items</button>
   </div>
 </main>
 
+<!-- ===== WHY ZESTO (LUXE-STYLE) ===== -->
+<section class="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 py-20 border-t border-zinc-200/50 bg-[#fdfbf9]">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+    <!-- Left column: elegant photograph -->
+    <div class="lg:col-span-5 relative rounded overflow-hidden shadow-sm border border-zinc-200/60" style="height: 480px;">
+      <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=600&auto=format&fit=crop" 
+           alt="Sourced Fresh" 
+           class="w-full h-full object-cover" />
+    </div>
+
+    <!-- Right column: text details -->
+    <div class="lg:col-span-7 flex flex-col gap-6">
+      <div>
+        <span class="text-[10px] uppercase tracking-[0.2em] font-extrabold text-primary block mb-3">Our Philosophy</span>
+        <h2 class="font-title text-4xl font-extrabold text-zinc-900 leading-tight">Built for Freshness,<br/>Mindful of the Future</h2>
+        <p class="text-zinc-600 text-sm mt-4 leading-relaxed max-w-lg">
+          We believe that culinary luxury should not come at the cost of the planet. Our commitment to sustainable sourcing, local partnerships, and zero plastic is woven into every dish we prepare.
+        </p>
+      </div>
+
+      <!-- 2x2 grid of elegant boxes -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
+        <div class="p-5 border border-zinc-200/60 rounded bg-white">
+          <span class="material-symbols-outlined text-primary mb-3" style="font-size:22px">eco</span>
+          <h4 class="font-title text-base font-bold text-zinc-900">Sustainability</h4>
+          <p class="text-zinc-500 text-xs mt-1.5 leading-relaxed">Eco-conscious sourcing and 100% biodegradable packaging to protect our planet.</p>
+        </div>
+        <div class="p-5 border border-zinc-200/60 rounded bg-white">
+          <span class="material-symbols-outlined text-primary mb-3" style="font-size:22px">workspace_premium</span>
+          <h4 class="font-title text-base font-bold text-zinc-900">Quality</h4>
+          <p class="text-zinc-500 text-xs mt-1.5 leading-relaxed">Every ingredient is handpicked from organic local farms to ensure unrivaled freshness.</p>
+        </div>
+        <div class="p-5 border border-zinc-200/60 rounded bg-white">
+          <span class="material-symbols-outlined text-primary mb-3" style="font-size:22px">restaurant</span>
+          <h4 class="font-title text-base font-bold text-zinc-900">Craftsmanship</h4>
+          <p class="text-zinc-500 text-xs mt-1.5 leading-relaxed">Our master chefs combine classic traditions with modern culinary techniques.</p>
+        </div>
+        <div class="p-5 border border-zinc-200/60 rounded bg-white">
+          <span class="material-symbols-outlined text-primary mb-3" style="font-size:22px">visibility</span>
+          <h4 class="font-title text-base font-bold text-zinc-900">Transparency</h4>
+          <p class="text-zinc-500 text-xs mt-1.5 leading-relaxed">Full traceability of our ingredients from local farms straight to your table.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ===== FLOATING CART (mobile) ===== -->
 <div id="floating-cart" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 hidden">
-  <a href="cart.php" class="flex items-center gap-4 bg-on-background text-surface rounded-2xl px-6 py-4 shadow-2xl font-bold text-sm animate-bounce-in">
-    <span class="material-symbols-outlined" style="font-size:20px">shopping_cart</span>
+  <a href="cart.php" class="flex items-center gap-4 bg-[#221f1d] text-white rounded-xl px-6 py-3.5 shadow-lg font-bold text-xs uppercase tracking-wider animate-scale-in">
+    <span class="material-symbols-outlined text-white" style="font-size:18px">shopping_cart</span>
     <span id="float-cart-info">View Cart</span>
-    <span class="bg-primary text-on-primary rounded-full px-3 py-0.5 text-xs" id="float-cart-price">₹0</span>
-    <span class="material-symbols-outlined" style="font-size:18px">arrow_forward</span>
+    <span class="bg-[#8a4f35] text-white rounded px-2 py-0.5 text-[10px]" id="float-cart-price">₹0</span>
+    <span class="material-symbols-outlined text-white" style="font-size:16px">arrow_forward</span>
   </a>
+</div>
+
 </div>
 
 <div id="toast-container"></div>
 <script src="js/cart.js"></script>
 <script>
+function initFadeInComponents() {
+  document.querySelectorAll('.fade-in').forEach((el) => {
+    const delay = Number(el.dataset.delay || 0);
+    const duration = Number(el.dataset.duration || 1000);
+    el.style.transitionDuration = `${duration}ms`;
+    setTimeout(() => {
+      el.classList.remove('opacity-0');
+      el.classList.add('opacity-100');
+    }, delay);
+  });
+}
+
+function initAnimatedHeading() {
+  document.querySelectorAll('.animated-heading').forEach((heading) => {
+    const text = heading.dataset.text || '';
+    const charDelay = Number(heading.dataset.charDelay || 30);
+    const initialDelay = Number(heading.dataset.initialDelay || 200);
+    const duration = Number(heading.dataset.duration || 500);
+    const lines = text.split('\n');
+    heading.innerHTML = lines.map((line, lineIndex) => {
+      const lineLength = line.length;
+      const chars = [...line].map((char, charIndex) => {
+        const delay = (lineIndex * lineLength * charDelay) + (charIndex * charDelay) + initialDelay;
+        const output = char === ' ' ? '&nbsp;' : char;
+        return `<span class="inline-block opacity-0 translate-x-[-18px] transition-all ease-out" style="transition-delay:${delay}ms;transition-duration:${duration}ms">${output}</span>`;
+      }).join('');
+      return `<span class="block">${chars}</span>`;
+    }).join('');
+
+    requestAnimationFrame(() => {
+      heading.querySelectorAll('span span').forEach((span) => {
+        span.classList.remove('opacity-0', 'translate-x-[-18px]');
+        span.classList.add('opacity-100', 'translate-x-0');
+      });
+    });
+  });
+}
+
 /* ===================================================
    Categories
 =================================================== */
 const CATEGORIES = [
-  { id:'all',          label:'All',            emoji:'🍽️' },
-  { id:'bread',        label:'Breads',         emoji:'🍞' },
-  { id:'rice',         label:'Rice Dishes',    emoji:'🍚' },
-  { id:'eggs',         label:'Eggs',           emoji:'🥚' },
-  { id:'indian',       label:'Indian',         emoji:'🍛' },
-  { id:'international',label:'International',  emoji:'🌍' },
+  { id:'all',          label:'All',            emoji:'' },
+  { id:'bread',        label:'Breads',         emoji:'' },
+  { id:'rice',         label:'Rice Dishes',    emoji:'' },
+  { id:'eggs',         label:'Eggs',           emoji:'' },
+  { id:'indian',       label:'Indian',         emoji:'' },
+  { id:'international',label:'International',  emoji:'' },
 ];
 
 /* ===================================================
@@ -175,7 +211,7 @@ const FOODS = [
 
   /* ── BREADS ──────────────────────────────────────── */
   {
-    id:'f01', name:'Bread',
+    id:'f01', name:"Baker's Basket Bread",
     restaurant:"Baker's Basket",
     cat:'bread', price:49, rating:4.2, ratingCount:3.1,
     veg:true, time:'5-10',
@@ -201,7 +237,7 @@ const FOODS = [
 
   /* ── RICE DISHES ─────────────────────────────────── */
   {
-    id:'f04', name:'Rice',
+    id:'f04', name:'Steamed Rice',
     restaurant:'Spice Garden',
     cat:'rice', price:59, rating:4.1, ratingCount:4.8,
     veg:true, time:'15-20',
@@ -235,7 +271,7 @@ const FOODS = [
 
   /* ── EGGS ────────────────────────────────────────── */
   {
-    id:'f08', name:'Boiled Egg',
+    id:'f08', name:'Boiled Eggs Set',
     restaurant:'Egg Station',
     cat:'eggs', price:29, rating:4.2, ratingCount:2.8,
     veg:false, time:'10-15',
@@ -303,7 +339,7 @@ const FOODS = [
 
   /* ── INTERNATIONAL ───────────────────────────────── */
   {
-    id:'f16', name:'Noodles',
+    id:'f16', name:'Indo-Chinese Noodles',
     restaurant:'Wok & Roll',
     cat:'international', price:129, rating:4.4, ratingCount:5.8,
     veg:true, time:'15-20',
@@ -311,7 +347,7 @@ const FOODS = [
     badge:'Indo-Chinese'
   },
   {
-    id:'f17', name:'Pasta',
+    id:'f17', name:'Pasta Arrabiata',
     restaurant:'Pasta Fresca',
     cat:'international', price:189, rating:4.6, ratingCount:4.2,
     veg:true, time:'20-25',
@@ -319,7 +355,7 @@ const FOODS = [
     badge:''
   },
   {
-    id:'f18', name:'Pizza',
+    id:'f18', name:'Margherita Classic Pizza',
     restaurant:'Pizza Primo',
     cat:'international', price:249, rating:4.7, ratingCount:6.3,
     veg:true, time:'20-30',
@@ -366,6 +402,8 @@ let searchQuery    = '';
    Init
 =================================================== */
 document.addEventListener('DOMContentLoaded', () => {
+  initAnimatedHeading();
+  initFadeInComponents();
   buildCategoryBar();
   renderFoods();
   loadLocation();
@@ -412,9 +450,9 @@ function buildCategoryBar() {
   const bar = document.getElementById('category-bar');
   bar.innerHTML = CATEGORIES.map(c => `
     <button id="cat-${c.id}" onclick="setCategory('${c.id}')"
-      class="flex-shrink-0 flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold border transition-all duration-200
-             ${c.id==='all' ? 'bg-primary text-on-primary border-primary' : 'border-outline-variant text-secondary hover:bg-surface-container'}">
-      <span>${c.emoji}</span> ${c.label}
+      class="flex-shrink-0 flex items-center px-5 py-2 rounded text-xs uppercase tracking-wider font-semibold border transition-all duration-200
+             ${c.id==='all' ? 'bg-primary text-white border-primary font-bold' : 'border-outline-variant text-secondary hover:bg-black/5'}">
+      ${c.label}
     </button>
   `).join('');
 }
@@ -422,10 +460,10 @@ function buildCategoryBar() {
 function setCategory(id) {
   activeCategory = id;
   document.querySelectorAll('[id^="cat-"]').forEach(btn => {
-    btn.className = 'flex-shrink-0 flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold border transition-all duration-200 border-outline-variant text-secondary hover:bg-surface-container';
+    btn.className = 'flex-shrink-0 flex items-center px-5 py-2 rounded text-xs uppercase tracking-wider font-semibold border transition-all duration-200 border-outline-variant text-secondary hover:bg-black/5';
   });
   const active = document.getElementById(`cat-${id}`);
-  if (active) active.className = 'flex-shrink-0 flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold border transition-all duration-200 bg-primary text-on-primary border-primary';
+  if (active) active.className = 'flex-shrink-0 flex items-center px-5 py-2 rounded text-xs uppercase tracking-wider font-bold border transition-all duration-200 bg-primary text-white border-primary';
   renderFoods();
 }
 
@@ -435,10 +473,10 @@ function setCategory(id) {
 function setDietFilter(diet) {
   activeDiet = diet;
   document.querySelectorAll('.diet-btn').forEach(b => {
-    b.className = 'diet-btn px-3 py-1 rounded-full text-xs font-bold border border-outline-variant transition-all hover:bg-surface-container';
+    b.className = 'diet-btn px-4 py-1.5 rounded text-xs uppercase tracking-wider font-semibold border border-zinc-200 transition-all text-zinc-700 hover:bg-black/5 bg-white';
   });
   const el = document.getElementById(`diet-${diet}`);
-  if (el) el.className = 'diet-btn active px-3 py-1 rounded-full text-xs font-bold border border-outline-variant transition-all bg-primary text-on-primary';
+  if (el) el.className = 'diet-btn active px-4 py-1.5 rounded text-xs uppercase tracking-wider font-bold border border-zinc-200 transition-all bg-primary text-white';
   renderFoods();
 }
 
@@ -513,44 +551,39 @@ function renderFoods() {
 function foodCard(f, i) {
   const qty = ZyropCart.getItemQty(f.id);
   const rc  = f.ratingCount;
-  const ratingStr = (typeof rc === 'number' && rc >= 1) ? `${rc}k ratings` : `${rc} ratings`;
-  const vegClass  = f.veg
-    ? 'border-green-600 text-green-600 bg-white'
-    : 'border-red-600 text-red-600 bg-white';
-
-  // Fallback image only if item.image is missing, and clear browser cache issue by adding ?v=2
+  const ratingStr = (typeof rc === 'number' && rc >= 1) ? `${rc}k` : `${rc}`;
+  
+  // Fallback image
   const imageUrl = f.image ? `${f.image}${f.image.includes('?') ? '&' : '?'}v=2` : 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80';
+  
+  const dietLabel = f.veg ? 'Veg' : 'Non-Veg';
+  const dietClass = f.veg ? 'text-emerald-700 bg-emerald-50 border-emerald-100' : 'text-amber-800 bg-amber-50 border-amber-100';
 
   return `
   <div class="food-card animate-fade-in-up" style="animation-delay:${i * 0.05}s">
-    <div class="relative overflow-hidden" style="height:180px">
-      <img src="${imageUrl}" alt="${f.name}" class="w-full h-full object-cover" loading="lazy"/>
-      ${f.badge ? `<span class="absolute top-3 left-3 bg-on-background/85 text-white text-[11px] font-bold px-2.5 py-1 rounded-full">${f.badge}</span>` : ''}
-      <span class="absolute top-3 right-3 w-5 h-5 rounded border-2 flex items-center justify-center text-[10px] font-bold ${vegClass}">●</span>
+    <div class="relative overflow-hidden" style="height:200px">
+      <img src="${imageUrl}" alt="${f.name}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" loading="lazy"/>
+      ${f.badge ? `<span class="absolute top-3 left-3 bg-[#221f1d] text-white text-[9px] uppercase tracking-wider font-bold px-2.5 py-1 rounded">${f.badge}</span>` : ''}
+      <span class="absolute top-3 right-3 text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 rounded border ${dietClass}">${dietLabel}</span>
     </div>
-    <div class="p-4 flex flex-col gap-2">
+    <div class="p-5 flex flex-col gap-3">
       <div>
-        <h3 class="font-bold text-sm text-on-surface leading-snug">${f.name}</h3>
-        <p class="text-xs text-secondary mt-0.5">${f.restaurant}</p>
+        <p class="text-[9px] uppercase tracking-widest text-secondary font-semibold">${f.restaurant}</p>
+        <h3 class="font-title text-lg font-bold text-on-surface leading-snug mt-1">${f.name}</h3>
       </div>
-      <div class="flex items-center gap-3 text-xs text-secondary">
+      <div class="flex items-center gap-3 text-xs text-secondary font-medium">
         <span class="flex items-center gap-1">
-          <span class="material-symbols-outlined filled text-yellow-500" style="font-size:14px">star</span>
-          <span class="font-semibold text-on-surface">${f.rating}</span>
-          <span>(${ratingStr})</span>
+          <span class="text-zinc-400">★</span> ${f.rating} <span class="text-[10px] text-zinc-400">(${ratingStr} ratings)</span>
         </span>
         <span>·</span>
-        <span class="flex items-center gap-0.5">
-          <span class="material-symbols-outlined" style="font-size:14px">schedule</span>
-          ${f.time} min
-        </span>
+        <span>${f.time} min</span>
       </div>
-      <div class="flex items-center justify-between mt-1">
+      <div class="flex items-center justify-between mt-2 pt-2 border-t border-black/[0.03]">
         <span class="font-extrabold text-base text-on-surface">&#8377;${f.price}</span>
         ${qty === 0
           ? `<button onclick="addToCart('${f.id}')" id="add-btn-${f.id}"
-               class="flex items-center gap-1.5 bg-primary text-on-primary rounded-full px-4 py-1.5 text-xs font-bold hover:bg-primary-container active:scale-95 transition-all">
-               <span class="material-symbols-outlined" style="font-size:16px">add</span> Add
+               class="px-4 py-1.5 text-xs font-bold border border-zinc-200 rounded-md hover:border-[#8a4f35] hover:text-[#8a4f35] transition-all duration-200">
+               Add to Cart
              </button>`
           : `<div class="qty-stepper" id="stepper-${f.id}">
                <button class="qty-btn" onclick="changeQty('${f.id}',-1)">−</button>
@@ -569,7 +602,7 @@ function foodCard(f, i) {
 function addToCart(id) {
   if (!IS_LOGGED_IN) {
     localStorage.setItem('zyrop_pending_action', JSON.stringify({ type: 'add_to_cart', id: id }));
-    showToast('Redirecting to login... 🔑', 'info', 1000);
+    showToast('Redirecting to login...', 'info', 1000);
     setTimeout(() => {
       window.location.href = 'login.php?redirect=' + encodeURIComponent(window.location.href);
     }, 800);
@@ -578,7 +611,7 @@ function addToCart(id) {
   const food = FOODS.find(f => f.id === id);
   if (!food) return;
   const qty = ZyropCart.addItem({ id:food.id, name:food.name, price:food.price, image:food.image, restaurant:food.restaurant, veg:food.veg });
-  showToast(`${food.name} added to cart! 🛒`, 'success', 2000);
+  showToast(`${food.name} added to your cart.`, 'success', 2000);
   updateFoodCardBtn(id, qty);
   updateFloatingCart();
 }
@@ -586,7 +619,7 @@ function addToCart(id) {
 function changeQty(id, delta) {
   if (!IS_LOGGED_IN) {
     localStorage.setItem('zyrop_pending_action', JSON.stringify({ type: 'change_qty', id: id, delta: delta }));
-    showToast('Please login to update your cart. 🔑', 'info', 1000);
+    showToast('Please log in to update your cart.', 'info', 1000);
     setTimeout(() => {
       window.location.href = 'login.php?redirect=' + encodeURIComponent(window.location.href);
     }, 800);
@@ -606,8 +639,8 @@ function updateFoodCardBtn(id, qty) {
   if (qty === 0) {
     if (stepper) {
       stepper.outerHTML = `<button onclick="addToCart('${id}')" id="add-btn-${id}"
-        class="flex items-center gap-1.5 bg-primary text-on-primary rounded-full px-4 py-1.5 text-xs font-bold hover:bg-primary-container active:scale-95 transition-all">
-        <span class="material-symbols-outlined" style="font-size:16px">add</span> Add
+        class="px-4 py-1.5 text-xs font-bold border border-zinc-200 rounded-md hover:border-[#8a4f35] hover:text-[#8a4f35] transition-all duration-200">
+        Add to Cart
       </button>`;
     }
   } else {
@@ -659,39 +692,17 @@ function updateCartBadge() {
    Location
 =================================================== */
 function loadLocation() {
-  const loc  = ZyropLocation.get();
+  const loc = JSON.parse(localStorage.getItem('zyrop_delivery_address') || 'null');
   const wrap = document.getElementById('header-location');
   const text = document.getElementById('header-loc-text');
   if (wrap) wrap.classList.remove('hidden');
-  if (loc) {
-    if (text) text.textContent = loc.label.split(',')[0];
-  } else {
-    if (text) text.textContent = 'Set location';
-    ZyropLocation.detect(
-      (l) => { if (text) text.textContent = l.label.split(',')[0]; },
-      ()  => { if (text) text.textContent = 'Set location'; }
-    );
-  }
+  if (text) text.textContent = loc && loc.label ? loc.label.split(',')[0] : 'Set location';
 }
 
 function changeHeaderLocation() {
-  if (!IS_LOGGED_IN) {
-    showToast('Please login to save location for orders. 🔑', 'info', 1000);
-    setTimeout(() => {
-      window.location.href = 'login.php?redirect=' + encodeURIComponent(window.location.href);
-    }, 800);
-    return;
-  }
-  showToast('Detecting location... 📍', 'info');
-  ZyropLocation.detect(
-    (loc) => {
-      ZyropLocation.save(loc);
-      loadLocation();
-      showToast('Location updated! 📍', 'success');
-    },
-    (err) => showToast(err, 'error')
-  );
+  window.location.href = 'cart.php';
 }
 </script>
-</body>
-</html>
+<?php include 'footer.php'; ?>
+
+
